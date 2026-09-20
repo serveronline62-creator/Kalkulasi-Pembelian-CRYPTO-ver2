@@ -9,9 +9,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<!-- ===== PDF.js + Tesseract.js ===== -->
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
@@ -54,6 +51,8 @@
   .btn.ghost:hover{background:#e2e8f0}
   .btn.green{background:var(--green);color:#fff}
   .btn.green:hover{background:#15803d}
+  .btn.teal{background:#0d9488;color:#fff}
+  .btn.teal:hover{background:#0f766e}
   .btn.excel{background:#107c41;color:#fff}
   .btn.excel:hover{background:#0c5e31}
   .btn.danger{background:#fee2e2;color:var(--red)}
@@ -291,7 +290,6 @@
   .alert.info{background:#dbeafe;color:#1e40af}
   .alert.warn{background:#fef3c7;color:#92400e}
   .alert.err{background:#fee2e2;color:#991b1b}
-  .alert.success{background:#dcfce7;color:#166534}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
     background:#0f172a;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;
     opacity:0;transition:.28s;z-index:99;pointer-events:none;max-width:90vw;text-align:center}
@@ -355,86 +353,13 @@
   .export-menu button:hover .em-sub{color:var(--brand)}
   .export-menu .em-sep{height:1px;background:var(--line);margin:4px 8px}
 
-  /* ====== UPLOAD SURAT JALAN ====== */
-  .sj-progress{margin-top:14px;padding:14px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;display:none}
-  .sj-progress.show{display:block}
-  .sj-progress .bar-wrap{height:8px;background:#e0f2fe;border-radius:4px;overflow:hidden;margin-top:8px}
-  .sj-progress .bar{height:100%;background:linear-gradient(90deg,#0ea5e9,#2563eb);width:0%;transition:width .3s}
-  .sj-progress .lbl{font-size:12px;font-weight:700;color:#075985;display:flex;justify-content:space-between}
-  .sj-progress .sub{font-size:11px;color:#0369a1;margin-top:4px}
-
-  .sj-type-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:700;margin-left:8px}
-  .sj-type-pill.pdf{background:#fee2e2;color:#991b1b}
-  .sj-type-pill.img{background:#fef3c7;color:#92400e}
-  .sj-type-pill.xls{background:#dcfce7;color:#166534}
-  .sj-type-pill.txt{background:#dbeafe;color:#1e40af}
-  .sj-type-pill.multi{background:#f3e8ff;color:#6b21a8}
-  .sj-type-pill.auto{background:#dcfce7;color:#065f46;animation:pulse 1.5s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-
-  .sj-preview-tbl{width:100%;border-collapse:collapse;font-size:12px}
-  .sj-preview-tbl th{background:#1e293b;color:#fff;padding:8px 12px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}
-  .sj-preview-tbl td{padding:8px 12px;border-bottom:1px solid #e2e8f0;vertical-align:middle}
-  .sj-preview-tbl tr:nth-child(even) td{background:#f8fafc}
-  .sj-preview-tbl .lbl-cell{font-weight:700;color:#1e293b;width:180px}
-  .sj-preview-tbl .val-cell input{width:100%;padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;font-family:inherit;outline:none}
-  .sj-preview-tbl .val-cell input:focus{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.15)}
-  .sj-preview-tbl .del-cell{width:50px;text-align:center}
-  .sj-preview-tbl .del-cell button{background:#fee2e2;border:none;color:#dc2626;width:26px;height:26px;border-radius:6px;cursor:pointer;font-weight:700}
-  .sj-preview-tbl .del-cell button:hover{background:#fecaca}
-
-  .sj-raw-wrap{margin-top:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;max-height:180px;overflow:auto;font-family:'Consolas','Monaco',monospace;font-size:11px;white-space:pre-wrap;color:#475569;display:none}
-  .sj-raw-wrap.show{display:block}
-  .sj-raw-wrap .raw-head{font-weight:700;color:#334155;font-size:11px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-  .sj-raw-wrap .raw-head button{background:#e2e8f0;border:none;padding:3px 8px;border-radius:5px;font-size:10px;cursor:pointer;color:#475569}
-
-  /* ====== AUTO-APPLY RESULT CARD ====== */
-  .sj-auto-banner{
-    padding:16px 20px;border-radius:12px;
-    background:linear-gradient(120deg,#dcfce7,#bbf7d0);
-    border:2px solid #16a34a;
-    color:#065f46;font-size:14px;font-weight:700;
-    display:flex;align-items:center;gap:12px;
-    margin-bottom:14px;animation:pop .3s ease;
+  /* ====== SJ DETECTION BADGE ====== */
+  .sj-detect-badge{
+    display:inline-block;font-size:10px;padding:2px 7px;border-radius:5px;
+    background:#dcfce7;color:#166534;font-weight:700;margin-left:6px;
   }
-  .sj-auto-banner .big-ic{font-size:32px;flex:none}
-  .sj-auto-banner .ttl{font-size:15px;font-weight:800;color:#166534}
-  .sj-auto-banner .sub{font-size:12px;font-weight:500;color:#047857;margin-top:3px}
-
-  .sj-auto-card{border:1px solid #a7f3d0;border-radius:10px;padding:12px 14px;
-    margin-bottom:8px;background:#f0fdf4;display:flex;align-items:center;gap:12px;
-    animation:slideIn .25s ease}
-  @keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
-  .sj-auto-card .ic{width:32px;height:32px;border-radius:8px;background:#16a34a;color:#fff;
-    display:grid;place-items:center;font-size:16px;flex:none}
-  .sj-auto-card .info{flex:1;min-width:0}
-  .sj-auto-card .gname{font-weight:800;color:#065f46;font-size:13px;
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .sj-auto-card .gmeta{font-size:11px;color:#047857;margin-top:2px}
-
-  .sj-warn-card{border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;
-    margin-bottom:8px;background:#fef3c7}
-  .sj-warn-card .head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-  .sj-warn-card .ic{width:32px;height:32px;border-radius:8px;background:#d97706;color:#fff;
-    display:grid;place-items:center;font-size:16px;flex:none}
-  .sj-warn-card .gname{font-weight:800;color:#92400e;font-size:13px;flex:1;
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .sj-warn-card .row{display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:center;margin-bottom:6px;font-size:12px}
-  .sj-warn-card .row label{font-weight:700;color:#78350f;font-size:11px}
-  .sj-warn-card .row input,.sj-warn-card .row select{padding:6px 10px;border:1px solid #fcd34d;border-radius:6px;font-size:12px;outline:none;width:100%;background:#fff}
-
-  /* ====== TEMPLATE DETECTION ====== */
-  .sj-tmpl-item{border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:10px;background:#fff}
-  .sj-tmpl-item .head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-  .sj-tmpl-item .head .name{font-weight:700;color:#1e293b;font-size:13px;flex:1}
-  .sj-tmpl-item .pat-row{display:grid;grid-template-columns:140px 1fr auto;gap:8px;margin-bottom:6px;align-items:center}
-  .sj-tmpl-item .pat-row label{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase}
-  .sj-tmpl-item .pat-row input{padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:11.5px;font-family:'Consolas','Monaco',monospace;outline:none;width:100%}
-  .sj-tmpl-item .pat-row input:focus{border-color:#2563eb}
-  .sj-tmpl-item .pat-row .del-pat{background:#f1f5f9;border:none;color:#64748b;padding:4px 8px;border-radius:5px;font-size:10px;cursor:pointer}
-  .sj-tmpl-item .pat-row .del-pat:hover{background:#fee2e2;color:#dc2626}
-  .sj-tmpl-add{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;padding:10px;text-align:center;cursor:pointer;font-size:11.5px;font-weight:700;color:#64748b;margin-top:6px}
-  .sj-tmpl-add:hover{background:#eff6ff;border-color:#2563eb;color:#2563eb}
+  .sj-detect-badge.warn{background:#fef3c7;color:#92400e}
+  .sj-detect-badge.err{background:#fee2e2;color:#991b1b}
 
   @media(max-width:640px){
     body{padding:10px}
@@ -510,9 +435,8 @@
     <option value="">Semua Status</option>
     <option>Open</option><option>Proses</option><option>Selesai</option><option>Batal</option>
   </select>
+  <button class="btn teal" id="sjImportBtn">📄 Upload Surat Jalan</button>
   <button class="btn green" id="importBtn">📥 Upload Excel</button>
-  <button class="btn ghost" id="uploadSjBtn" style="background:#7c2d12;color:#fff;border-color:#7c2d12">📄 Upload Surat Jalan</button>
-  <button class="btn ghost" id="templateSjBtn" title="Kelola template deteksi SJ">⚙️ Template Deteksi</button>
   <div class="export-wrap">
     <button class="btn excel" id="exportBtn">⬇ Download Excel ▾</button>
     <div class="export-menu" id="exportMenu">
@@ -520,7 +444,7 @@
         <span class="em-icon">📋</span>
         <span>
           <span style="display:block">Data Lengkap (per Item)</span>
-          <span class="em-sub">Semua kolom · 1 baris = 1 part number</span>
+          <span class="em-sub">Semua kolom · 1 baris = 1 part number · Nomor urut direset per grup</span>
         </span>
       </button>
       <div class="em-sep"></div>
@@ -540,8 +464,12 @@
 <div class="hint-bar">
   <span class="icon">💡</span>
   <span>
-    Kolom info pengiriman bisa <b>langsung diklik &amp; diketik</b> di sel-nya. Kolom <b>TCODE</b> otomatis terisi <b>3 huruf pertama</b> dari <b>Bukti Transaksi Kirim</b>.
-    <br><span style="color:#7c2d12">📄 <b>Upload Surat Jalan</b> — setelah file diupload, data akan <b>OTOMATIS terisi</b> ke grup yang cocok tanpa perlu pilih manual. Mendukung PDF (dengan OCR), Gambar (OCR), Excel, CSV, dan TXT. Bisa mendeteksi <b>multi-SJ</b> dalam 1 file.</span>
+    Kolom <b>Nomor Surat Jalan ke P3</b>, <b>Dikonfirmasi Tanggal</b>, <b>Sjl KPG - SBY</b>, <b>Tgl Kirim KPG - SBY</b>, <b>NAMA EXPEDISI</b>, <b>NO. RESI / TRACKING EXPEDISI</b>, <b>Sjl SBY</b>, <b>Tgl Kirim SBY</b>, <b>NO TRUK | DRIVER</b>, <b>Diubah Oleh</b>, <b>Diubah Pada</b>, dan <b>TCODE</b> bisa <b>langsung diklik &amp; diketik</b> di sel-nya.
+    Kolom <b>TCODE</b> otomatis terisi <b>3 huruf pertama</b> dari <b>Bukti Transaksi Kirim</b>
+    (contoh: <code>KKG/KPG/SV/26/06/003</code> → <b>KKG</b>, <code>TRU/KPG/SV/26/06/006</code> → <b>TRU</b>).
+    Tekan <b>Enter</b> untuk simpan, <b>Esc</b> untuk batal.
+    <br><span style="color:#78350f">🆕 Tombol <b>📄 Upload Surat Jalan</b> — upload file SJ (Excel/CSV), sistem <b>otomatis mendeteksi</b> baris header &amp; kolom SJ, lalu mengisi info pengiriman grup.</span>
+    <br><span style="color:#78350f">💾 Tombol <b>Download Excel</b> punya 2 opsi: <b>Data Lengkap (per Item)</b> dan <b>Tampilan Depan (per Grup)</b>.</span>
   </span>
 </div>
 
@@ -560,7 +488,7 @@
     <div class="modal-head">
       <div>
         <h2>✏ Edit Info Pengiriman (Form Lengkap)</h2>
-        <div class="sub">Alternatif input manual lewat form</div>
+        <div class="sub">Alternatif input manual lewat form — untuk mengisi seluruh kolom info sekaligus</div>
       </div>
       <button class="close-x" id="metaCloseX">✕</button>
     </div>
@@ -588,7 +516,7 @@
           <span class="key" id="detailKey">-</span>
           <span class="count-pill" id="detailCount">0 item</span>
         </div>
-        <div class="detail-hint">Tampilan spreadsheet — kolom <b>Nomor</b> menampilkan nomor urut baru</div>
+        <div class="detail-hint">Tampilan spreadsheet — kolom <b>Nomor</b> di sini menampilkan nomor urut baru sesuai urutan item (1, 2, 3, …)</div>
       </div>
       <button class="close-x" id="detailCloseX">✕</button>
     </div>
@@ -630,13 +558,13 @@
   </div>
 </div>
 
-<!-- IMPORT EXCEL MODAL -->
+<!-- IMPORT MODAL (Excel biasa) -->
 <div class="overlay" id="importOverlay">
   <div class="modal small">
     <div class="modal-head">
       <div>
         <h2>📥 Upload Data dari Excel</h2>
-        <div class="sub">Format: .xlsx, .xls, .csv</div>
+        <div class="sub">Format: .xlsx, .xls, .csv — header baris pertama harus sesuai nama kolom</div>
       </div>
       <button class="close-x" id="importCloseX">✕</button>
     </div>
@@ -647,6 +575,7 @@
         <div class="hint">Maks 1 file · .xlsx / .xls / .csv</div>
       </div>
       <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none">
+
       <div class="file-chip" id="fileChip">
         <div class="fc-icon">📄</div>
         <div>
@@ -655,12 +584,15 @@
         </div>
         <button class="fc-x" id="fcRemove" title="Hapus file">✕</button>
       </div>
+
       <div class="opt-row">
         <span style="font-size:12px;font-weight:700;color:#334155">Mode Import:</span>
         <label><input type="radio" name="importMode" value="append" checked> Tambahkan ke data existing</label>
         <label><input type="radio" name="importMode" value="replace"> Ganti semua data</label>
       </div>
+
       <div class="alert" id="importAlert"></div>
+
       <div class="preview-box" id="previewBox">
         <div class="preview-head">
           <span>🔎 Preview Data</span>
@@ -668,6 +600,7 @@
         </div>
         <div class="preview-scroll" id="previewScroll"></div>
       </div>
+
       <div id="mappingWrap" style="display:none;margin-top:14px">
         <div style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">
           Status Pemetaan Kolom
@@ -683,17 +616,13 @@
   </div>
 </div>
 
-<!-- ================= UPLOAD SURAT JALAN ================= -->
+<!-- SURAT JALAN MODAL (Auto-Detect) -->
 <div class="overlay" id="sjOverlay">
-  <div class="modal wide">
+  <div class="modal medium">
     <div class="modal-head">
       <div>
-        <h2>📄 Upload Surat Jalan — Auto Detect & Auto Apply
-          <span id="sjTypePill" class="sj-type-pill" style="display:none">-</span>
-          <span id="sjMultiPill" class="sj-type-pill multi" style="display:none">🔢 Multi-SJ</span>
-          <span id="sjAutoPill" class="sj-type-pill auto" style="display:none">⚡ Auto</span>
-        </h2>
-        <div class="sub">Upload → Deteksi → Auto-isi ke grup yang cocok → Selesai (tanpa pilih manual)</div>
+        <h2>📄 Upload Surat Jalan — Auto Detect</h2>
+        <div class="sub">Upload file SJ (Excel/CSV) — sistem otomatis mendeteksi baris header &amp; kolom SJ, lalu mengisi info pengiriman grup</div>
       </div>
       <button class="close-x" id="sjCloseX">✕</button>
     </div>
@@ -701,12 +630,9 @@
       <div class="drop-zone" id="sjDropZone">
         <div class="icon">📄</div>
         <div class="ttl">Klik atau tarik file Surat Jalan ke sini</div>
-        <div class="hint">Format: <b>.pdf</b>, <b>.jpg</b>, <b>.png</b>, <b>.xlsx</b>, <b>.xls</b>, <b>.csv</b>, <b>.txt</b><br>
-          <small>Mendukung <b>multi-SJ</b> dalam 1 file — semua akan di-auto-apply</small>
-        </div>
+        <div class="hint">.xlsx / .xls / .csv — header boleh di baris mana saja</div>
       </div>
-      <input type="file" id="sjFileInput"
-             accept=".pdf,.jpg,.jpeg,.png,.webp,.xlsx,.xls,.csv,.txt" style="display:none">
+      <input type="file" id="sjFileInput" accept=".xlsx,.xls,.csv" style="display:none">
 
       <div class="file-chip" id="sjFileChip">
         <div class="fc-icon">📄</div>
@@ -714,93 +640,30 @@
           <div class="fc-name" id="sjFcName">-</div>
           <div class="fc-meta" id="sjFcMeta">-</div>
         </div>
-        <button class="fc-x" id="sjFcRemove" title="Hapus file">✕</button>
-      </div>
-
-      <div class="sj-progress" id="sjProgress">
-        <div class="lbl">
-          <span id="sjProgLabel">Memproses…</span>
-          <span id="sjProgPct">0%</span>
-        </div>
-        <div class="bar-wrap"><div class="bar" id="sjProgBar"></div></div>
-        <div class="sub" id="sjProgSub">Mohon tunggu, sedang mengekstrak teks dari file…</div>
+        <button class="fc-x" id="sjFcRemove">✕</button>
       </div>
 
       <div class="alert" id="sjAlert"></div>
 
-      <!-- BANNER SUKSES AUTO APPLY -->
-      <div id="sjAutoBannerWrap"></div>
-
-      <!-- PREVIEW (read-only saat auto-applied) -->
       <div class="preview-box" id="sjPreviewBox">
         <div class="preview-head">
-          <span id="sjPreviewTitle">🔍 Hasil Deteksi Otomatis</span>
-          <span id="sjPreviewCount" style="font-weight:600;color:#64748b">0 field</span>
+          <span>🔎 Hasil Deteksi Otomatis</span>
+          <span id="sjPreviewCount" style="font-weight:600;color:#64748b">0 grup</span>
         </div>
-        <div style="max-height:340px;overflow:auto" id="sjPreviewScroll"></div>
+        <div class="preview-scroll" id="sjPreviewScroll"></div>
       </div>
 
-      <!-- MULTI-SJ RESULTS -->
-      <div id="sjMultiWrap" style="display:none;margin-top:14px">
-        <div style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">
-          🔢 Hasil Deteksi Multi-SJ — <span id="sjMultiCount">0</span> Surat Jalan
+      <div id="sjMappingWrap" style="display:none;margin-top:14px">
+        <div style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">
+          Kolom SJ yang Terdeteksi
         </div>
-        <div id="sjMultiList" style="max-height:480px;overflow:auto;padding-right:4px"></div>
-      </div>
-
-      <!-- FALLBACK MANUAL (kalau tidak ada grup cocok) -->
-      <div id="sjTargetWrap" style="display:none;margin-top:16px">
-        <div class="alert warn show" style="margin-bottom:10px">
-          ⚠️ Tidak ada grup yang cocok otomatis. Silakan pilih grup target manual di bawah, atau biarkan sistem membuat grup baru.
-        </div>
-        <div class="field">
-          <label>🎯 Pilih Grup Bukti Transaksi Kirim</label>
-          <select id="sjTargetGroup" class="filter" style="width:100%;padding:9px 12px">
-            <option value="">-- Pilih grup --</option>
-          </select>
-          <div class="field-hint">Atau biarkan kosong → sistem akan buat grup baru dengan nama dari No SJ</div>
-        </div>
-      </div>
-
-      <div class="sj-raw-wrap" id="sjRawWrap">
-        <div class="raw-head">
-          <span>📝 Teks Mentah (hasil ekstraksi)</span>
-          <button id="sjToggleRaw" type="button">Sembunyikan</button>
-        </div>
-        <div id="sjRawText"></div>
+        <div class="mapping-list" id="sjMappingList"></div>
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn ghost" id="sjResetBtn" style="display:none">🔄 Reset</button>
       <div class="spacer"></div>
-      <button class="btn ghost" id="sjCancelBtn">Tutup</button>
-      <button class="btn primary" id="sjApplyBtn" disabled>✓ Terapkan</button>
-    </div>
-  </div>
-</div>
-
-<!-- ================= TEMPLATE DETEKSI ================= -->
-<div class="overlay" id="sjTmplOverlay">
-  <div class="modal medium">
-    <div class="modal-head">
-      <div>
-        <h2>⚙️ Template Deteksi Surat Jalan</h2>
-        <div class="sub">Custom regex & keyword untuk mendeteksi field dari SJ Anda</div>
-      </div>
-      <button class="close-x" id="sjTmplCloseX">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="alert info show" style="margin-bottom:14px">
-        <b>💡 Cara pakai:</b> Setiap field punya beberapa pola regex. Sistem mencoba dari atas ke bawah, pola pertama yang match akan dipakai.
-        Gunakan <code>([A-Z0-9\/\-\.]+)</code> untuk menangkap nilai.
-      </div>
-      <div id="sjTmplList"></div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn ghost" id="sjTmplResetAllBtn">🔄 Reset ke Default</button>
-      <div class="spacer"></div>
-      <button class="btn ghost" id="sjTmplCancelBtn">Batal</button>
-      <button class="btn primary" id="sjTmplSaveBtn">💾 Simpan Template</button>
+      <button class="btn ghost" id="sjCancelBtn">Batal</button>
+      <button class="btn teal" id="sjConfirmBtn" disabled>✓ Terapkan ke Data</button>
     </div>
   </div>
 </div>
@@ -955,6 +818,13 @@ let importRows = [];
 let importMapping = {};
 let importMetaMap = {};
 
+/* SJ state */
+let sjGroups = new Map();
+let sjDetectedMeta = {};
+let sjHeaderRow = -1;
+let sjHeaderMap = {};
+let sjKeyMap = {};
+
 const $   = s => document.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -963,7 +833,7 @@ function toast(msg){
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._tm);
-  t._tm = setTimeout(()=>t.classList.remove('show'), 2400);
+  t._tm = setTimeout(()=>t.classList.remove('show'), 2200);
 }
 
 /* =========================================================
@@ -1035,7 +905,7 @@ function getGroups(){
 }
 
 /* =========================================================
-   MAIN TABLE HEADER
+   MAIN TABLE
    ========================================================= */
 function buildMainHead(){
   const th = [
@@ -1050,9 +920,6 @@ function buildMainHead(){
   $('#mainThead').innerHTML = `<tr>${th}</tr>`;
 }
 
-/* =========================================================
-   RENDER MAIN TABLE
-   ========================================================= */
 function renderTable(){
   const groups = getGroups();
   const tbody  = $('#mainTbody');
@@ -1275,7 +1142,7 @@ function buildMetaForm(){
     let input;
     let hint = '';
     if(f.key === 'tcode'){
-      hint = `<div class="field-hint">⚡ Otomatis terisi 3 huruf pertama dari Bukti Transaksi Kirim</div>`;
+      hint = `<div class="field-hint">⚡ Otomatis terisi 3 huruf pertama dari Bukti Transaksi Kirim (bisa diubah manual)</div>`;
     }
     if(f.type === 'select'){
       input = `<select name="${f.key}"><option value="">-- Pilih --</option>
@@ -1412,7 +1279,7 @@ function renderDetail(){
       renderTable();
       if(data.filter(d=>groupKey(d)===currentDetailKey).length === 0){
         closeDetail();
-        toast('🗑 Item dihapus — grup kosong');
+        toast('🗑 Item dihapus — grup kosong, kembali ke daftar');
       }else{
         renderDetail();
         toast('🗑 Item dihapus');
@@ -1606,7 +1473,8 @@ function exportExcel(){
     ['Total Grup Bukti Transaksi', new Set(filtered.map(groupKey)).size],
     ['Filter Site', $('#siteFilter').value || 'Semua'],
     ['Filter Status', $('#statusFilter').value || 'Semua'],
-    ['Kata Kunci', $('#searchInput').value.trim() || '-']
+    ['Kata Kunci', $('#searchInput').value.trim() || '-'],
+    [''], ['Catatan', 'Nomor urut di-reset per grup Bukti Transaksi Kirim (1, 2, 3, …)']
   ];
   const wsInfo = XLSX.utils.aoa_to_sheet(info);
   wsInfo['!cols'] = [{wch:26},{wch:56}];
@@ -1624,11 +1492,9 @@ function exportFrontViewExcel(){
   const entries = [...groups.entries()].sort((a,b)=> a[0].localeCompare(b[0]));
 
   const headers = [
-    'Bukti Transaksi Kirim',
-    'Site',
+    'Bukti Transaksi Kirim','Site',
     ...GROUP_FIELDS.map(f => f.label),
-    'Jumlah Item',
-    'Total Qty'
+    'Jumlah Item','Total Qty'
   ];
 
   const rows = entries.map(([key, items])=>{
@@ -1670,8 +1536,7 @@ function exportFrontViewExcel(){
     ['Laporan', 'Kontrol Pengiriman Sparepart — Tampilan Depan'],
     ['Mode Export', 'Tampilan Depan (per Grup)'],
     ['Tanggal Export', new Date().toLocaleString('id-ID')],
-    ['Diekspor Oleh', currentUser ? emailToUsername(currentUser.email) : '-'],
-    ['Total Grup Bukti Transaksi', rows.length],
+    ['Total Grup', rows.length],
     ['Total Item', totalItems],
     ['Total Qty', grandQty]
   ];
@@ -1744,57 +1609,74 @@ function downloadTemplateExcel(){
   const ws = XLSX.utils.json_to_sheet([example], { header: headers });
   ws['!cols'] = autoWidths([example], headers);
 
+  const guide = [
+    ['PETUNJUK PENGGUNAAN TEMPLATE'],[''],
+    ['1. Isi data mulai dari baris ke-2 (baris ke-1 adalah header).'],
+    ['2. Jangan mengubah nama kolom pada baris pertama.'],
+    ['3. Kolom "Bukti Transaksi Kirim" berfungsi sebagai kunci pengelompokan.'],
+    ['4. Kolom INFO PENGIRIMAN ada di PALING KANAN (setelah Analisis SA).'],
+    ['5. Kolom TCODE otomatis terisi = 3 huruf pertama dari segmen pertama.'],
+    ['6. Format tanggal: YYYY-MM-DD.']
+  ];
+  const wsGuide = XLSX.utils.aoa_to_sheet(guide);
+  wsGuide['!cols'] = [{wch:60}];
+
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Template');
+  XLSX.utils.book_append_sheet(wb, wsGuide, 'Petunjuk');
 
   XLSX.writeFile(wb, 'template-upload-sparepart.xlsx');
   toast('📄 Template Excel berhasil diunduh');
 }
 
 /* =========================================================
-   IMPORT EXCEL
+   IMPORT EXCEL (DATA SPAREPART)
    ========================================================= */
 function norm(str){
   return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 const HEADER_ALIASES = {
-  nomor:               ['nomor','no','nomer','nomorurut','no.','no'],
+  nomor:               ['nomor','no','nomer','nomorurut','no.'],
   site:                ['site','sitelokasi','lokasisite','lokasi'],
-  buktiTransaksiKirim: ['buktitransaksikirim','buktikirim','buktitransaksi','nobuktikirim','nobukti'],
-  tanggalReservasi:    ['tanggalreservasi','tglreservasi','tglresv'],
-  buktiServiceCall:    ['buktiservicecall','servicecall','sc'],
-  buktiServiceJob:     ['buktiservicejob','servicejob','sj'],
-  statusServiceCall:   ['statusservicecall','statussc','status'],
-  partNumber:          ['partnumber','partno','partnum','pn','kodebarang'],
-  deskripsiPartNumber: ['deskripsipartnumber','deskripsi','description','namapart'],
-  qty:                 ['qty','quantity','jumlah','jml'],
-  nomorSeriMaterial:   ['nomorserimaterial','nomorseri','serialnumber','sn'],
-  kembaliKePabrik:     ['kembalikepabrik','kembalipabrik','returpabrik','retur'],
-  klaimKeHIT:          ['klaimkeh','klaimkehit','klaim'],
-  lokasiReservasi:     ['lokasireservasi','lokreservasi'],
-  lokasiStok:          ['lokasistok','lokstok','gudang','rak'],
-  lokasiTujuan:        ['lokasitujuan','loktujuan','tujuan'],
-  buktiReservasi:      ['buktireservasi','reservationproof'],
-  nomorPO:             ['nomorpo','nopo','po'],
-  invoiceKeHIT:        ['invoicekeh','invoicekehit','invoice'],
-  buktiTerima:         ['buktiterima','terima','bast','ba'],
-  analisisSA:          ['analisissa','analisis','catatan','note']
+  buktiTransaksiKirim: ['buktitransaksikirim','buktikirim','buktitransaksi','transactionproof','nobuktikirim','nobukti'],
+  tanggalReservasi:    ['tanggalreservasi','tglreservasi','tglresv','reservationdate'],
+  buktiServiceCall:    ['buktiservicecall','servicecall','sc','bukti_sc'],
+  buktiServiceJob:     ['buktiservicejob','servicejob','sj','bukti_sj'],
+  statusServiceCall:   ['statusservicecall','statussc','status','statuscall'],
+  partNumber:          ['partnumber','partno','partnum','pn','part_number','kodebarang','kode_part'],
+  deskripsiPartNumber: ['deskripsipartnumber','deskripsi','description','namapart','namabarang','deskripsipart'],
+  qty:                 ['qty','quantity','jumlah','kuantitas','jml'],
+  nomorSeriMaterial:   ['nomorserimaterial','nomorseri','serialnumber','serialno','sn','nomor_seri','noseri'],
+  kembaliKePabrik:     ['kembalikepabrik','kembalipabrik','returpabrik','retur','returnpabrik'],
+  klaimKeHIT:          ['klaimkeh','klaimkehit','klaim','claimhit','claim'],
+  lokasiReservasi:     ['lokasireservasi','lokreservasi','lokresv','reservasilokasi'],
+  lokasiStok:          ['lokasistok','lokstok','lokasigudang','gudang','rak'],
+  lokasiTujuan:        ['lokasitujuan','loktujuan','tujuan','destination','lokasikirim'],
+  buktiReservasi:      ['buktireservasi','bukti_reservasi','reservationproof','reservasibukti'],
+  nomorPO:             ['nomorpo','nopo','no_po','po','purchaseorder'],
+  invoiceKeHIT:        ['invoicekeh','invoicekehit','invoice','invoicehit'],
+  buktiTerima:         ['bukti terima','bukti_terima','buktiterima','terima','penerimaan','bast','ba'],
+  analisisSA:          ['analisissa','analisis','analisysa','catatan','keterangan','note']
 };
 
 const META_ALIASES = {
-  nomorSuratJalanP3:   ['nomorsuratjalanp3','nosuratjalanp3','nosj','suratjalan'],
-  dikonfirmasiTanggal: ['dikonfirmasitanggal','tglkonfirmasi'],
-  sjlKpgSby:           ['sjlkpgsby','suratjalankpgsby'],
-  tglKirimKpgSby:      ['tglkirimkpgsby','tanggal kirim kpg sby'],
+  nomorSuratJalanP3:   ['nomorsuratjalanp3','nomorsuratjalan kep3','nomorsuratjalan',
+                        'nosuratjalanp3','nosj','nosuratjalan','suratjalan','nomorsj'],
+  dikonfirmasiTanggal: ['dikonfirmasitanggal','tglkonfirmasi','tanggaldikonfirmasi'],
+  sjlKpgSby:           ['sjlkpgsby','sjlkpg-sby','suratjalankpgsby','sjl_kpg_sby','suratjalan_kpg_sby'],
+  tglKirimKpgSby:      ['tglkirimkpgsby','tglkirimkpg-sby','tanggal kirim kpg sby','tgl_kirim_kpg_sby'],
   namaExpedisi:        ['namaexpedisi','expedisi','ekspedisi','kurir'],
-  noResiExpedisi:      ['no resi / tracking expedisi','noresiexpedisi','noresi','resi'],
-  sjlSby:              ['sjlsby','suratjalansby'],
-  tglKirimSby:         ['tglkirimsby','tanggal kirim sby'],
-  noTrukDriver:        ['no truk | driver','notrukdriver','notruk','nopol'],
-  diubahOleh:          ['diubaholeh','editor'],
-  diubahPada:          ['diubahpada','tanggalubah'],
-  tcode:               ['tcode','kodetransaksi']
+  noResiExpedisi:      ['no resi / tracking expedisi','no resi expedisi','noresiexpedisi',
+                        'noresi','nomeresi','no_resi','resi','notracking',
+                        'no tracking expedisi','noresi/trackingexpedisi'],
+  sjlSby:              ['sjlsby','sjl_sby','suratjalansby','suratjalan_sby'],
+  tglKirimSby:         ['tglkirimsby','tgl_kirim_sby','tanggal kirim sby'],
+  noTrukDriver:        ['no truk | driver','notrukdriver','notruk|driver','notruk','nodriver',
+                        'nopol','nopol|driver','notruk_driver'],
+  diubahOleh:          ['diubaholeh','diubah_oleh','editor','modifiedby'],
+  diubahPada:          ['diubahpada','diubah_pada','modifiedat','tanggalubah'],
+  tcode:               ['tcode','t_code','kodetransaksi']
 };
 
 function mapHeaders(headers){
@@ -1854,7 +1736,7 @@ function handleFile(file){
   if(!file){ return; }
   const ext = file.name.split('.').pop().toLowerCase();
   if(!['xlsx','xls','csv'].includes(ext)){
-    showAlert('Format file tidak didukung.', 'err');
+    showAlert('Format file tidak didukung. Gunakan .xlsx, .xls, atau .csv', 'err');
     return;
   }
   $('#fcName').textContent = file.name;
@@ -1868,7 +1750,7 @@ function handleFile(file){
       const ws = wb.Sheets[wb.SheetNames[0]];
       const json = XLSX.utils.sheet_to_json(ws, {defval:'', raw:false});
       if(!json.length){
-        showAlert('File kosong.', 'err');
+        showAlert('File kosong atau tidak ada baris data.', 'err');
         $('#fcMeta').textContent = '0 baris';
         $('#importConfirmBtn').disabled = true;
         return;
@@ -1920,7 +1802,7 @@ function handleFile(file){
         }
       });
 
-      $('#fcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · ' + importRows.length + ' baris';
+      $('#fcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · ' + importRows.length + ' baris siap diimport';
       renderImportPreview(headers);
       renderMappingStatus(metaMap);
 
@@ -1929,13 +1811,13 @@ function handleFile(file){
       const hasPart = importMapping.partNumber !== undefined;
 
       if(!hasBTK){
-        showAlert('Kolom "Bukti Transaksi Kirim" tidak ditemukan.', 'warn');
+        showAlert('Kolom "Bukti Transaksi Kirim" tidak ditemukan. Semua baris masuk ke grup "(Tanpa Bukti Transaksi Kirim)".', 'warn');
         $('#importConfirmBtn').disabled = false;
       }else if(!hasSite && !hasPart){
-        showAlert('Kolom "Site" dan "Part Number" tidak ditemukan.', 'err');
+        showAlert('Kolom "Site" dan "Part Number" tidak ditemukan. Periksa nama kolom pada file Excel.', 'err');
         $('#importConfirmBtn').disabled = true;
       }else{
-        showAlert('✓ File berhasil dibaca.', 'info');
+        showAlert('✓ File berhasil dibaca. Periksa preview lalu klik "Import Sekarang".', 'info');
         $('#importConfirmBtn').disabled = false;
       }
     }catch(err){
@@ -1953,8 +1835,7 @@ function showAlert(msg, type){
 }
 function renderImportPreview(headers){
   const previewKeys = ['nomor','buktiTransaksiKirim','nomorSuratJalanP3','sjlKpgSby','namaExpedisi','noResiExpedisi',
-                       'sjlSby','noTrukDriver',
-                       'site','partNumber','qty','statusServiceCall'];
+                       'sjlSby','noTrukDriver','site','partNumber','qty','statusServiceCall'];
   const allIdx = { ...importMapping, ...mapMetaHeaders(headers) };
   const cols = previewKeys.filter(k => allIdx[k] !== undefined);
   const useCols = cols.length ? cols : FIELDS.slice(0,6).map(f=>f.key);
@@ -2018,11 +1899,11 @@ function confirmImport(){
   });
 
   if(mode === 'replace'){
-    if(!confirm(`Ganti SEMUA data existing?`)) return;
+    if(!confirm(`Ganti SEMUA data existing (${data.length} baris) dengan ${newRecords.length} baris dari file?`)) return;
     data = newRecords;
     groupMeta = { ...importMetaMap };
     saveMeta();
-    toast(`✓ Import selesai — ${newRecords.length} baris`);
+    toast(`✓ Import selesai — ${newRecords.length} baris (mode: ganti semua)`);
   }else{
     data = data.concat(newRecords);
     Object.keys(importMetaMap).forEach(k=>{
@@ -2037,1077 +1918,369 @@ function confirmImport(){
 }
 
 /* =========================================================
-   UPLOAD SURAT JALAN — AUTO APPLY + FUZZY + AUTO-CREATE
+   =========================================================
+   SURAT JALAN IMPORT — AUTO-DETECT
+   =========================================================
    ========================================================= */
-if(window.pdfjsLib){
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
+const SJ_ALIASES = {
+  nomorSuratJalanP3: [
+    'nomorsuratjalan','nomorsj','nosj','no_sj','no surat jalan',
+    'suratjalan','nomorsuratjalanp3','nosuratjalan','sj','no_surat_jalan',
+    'nomor surat jalan ke p3','no sj p3','nomorsj','no.sj','nomor sj',
+    'no surat jalan ke p3','surat jalan ke p3','no p3','sj p3'
+  ],
+  sjlKpgSby: [
+    'sjlkpg','sjlkpgsby','sjl_kpg_sby','suratjalankpgsby',
+    'sjl kpg - sby','sjl kpg-sby','no sjl kpg','sjl_kpg-sby',
+    'sjl kpg sby','surat jalan kpg sby','sjl kpgsby'
+  ],
+  sjlSby: [
+    'sjlsby','sjl_sby','suratjalansby','sjl sby','no sjl sby',
+    'sjl_sby','surat jalan sby','sjl sby kds'
+  ],
+  tglKirimKpgSby: [
+    'tglkirimkpgsby','tgl_kirim_kpg_sby','tanggal kirim kpg sby',
+    'tgl kirim kpg - sby','tglkirimkpg-sby','tgl_kirim_kpg-sby',
+    'tgl kirim kpg sby'
+  ],
+  tglKirimSby: [
+    'tglkirimsby','tgl_kirim_sby','tanggal kirim sby','tgl kirim sby',
+    'tanggal kirim sby'
+  ],
+  namaExpedisi: [
+    'namaexpedisi','expedisi','ekspedisi','kurir','nama ekspedisi',
+    'nama_ekspedisi','jasa kirim','vendor kirim','vendor','kurir kirim'
+  ],
+  noResiExpedisi: [
+    'noresi','no_resi','nomeresi','resi','notracking','no tracking',
+    'no resi / tracking expedisi','no resi expedisi','tracking',
+    'no_resi_ekspedisi','no resi / tracking','no resi/tracking',
+    'nomor resi','no resi kirim','tracking expedisi','no resi '
+  ],
+  noTrukDriver: [
+    'notrukdriver','no truk | driver','notruk','nodriver','nopol',
+    'no truk','nopol|driver','no_truk_driver','plat nomor',
+    'nomor truk','no truk driver','truk driver'
+  ],
+  dikonfirmasiTanggal: [
+    'dikonfirmasitanggal','tglkonfirmasi','tanggaldikonfirmasi',
+    'dikonfirmasi tanggal','tgl konfirmasi','tgl dikonfirmasi',
+    'tanggal dikonfirmasi'
+  ],
+  tcode: ['tcode','t_code','kodetransaksi','kode transaksi','kode']
+};
+
+const SJ_KEY_ALIASES = {
+  buktiTransaksiKirim: [
+    'buktitransaksikirim','buktikirim','buktitransaksi','nobukti',
+    'no bukti','bukti transaksi kirim','no_bukti_kirim','no bukti kirim',
+    'nobuktikirim','bukti_transaksi_kirim','bukti transaksi',
+    'no bukti transaksi','nobukti transaksi'
+  ],
+  partNumber: [
+    'partnumber','partno','partnum','pn','part_number','kodebarang',
+    'kode part','part number','no part','part no','no. part'
+  ],
+  qty: ['qty','quantity','jumlah','kuantitas','jml','qty kirim','quantity kirim'],
+  nomorSeriMaterial: [
+    'nomorserimaterial','nomorseri','serialnumber','serialno','sn',
+    'nomor seri','no seri','serial number','nomor seri material'
+  ],
+  deskripsiPartNumber: [
+    'deskripsipartnumber','deskripsi','description','namapart',
+    'nama barang','deskripsi part','nama part','part description'
+  ],
+  site: ['site','sitelokasi','lokasisite','lokasi','site tujuan','tujuan']
+};
+
+/* ---------- Deteksi baris header ---------- */
+function detectSjHeaderRow(rows){
+  let best = { idx: -1, score: 0 };
+  const allAliases = [
+    ...Object.values(SJ_ALIASES).flat(),
+    ...Object.values(SJ_KEY_ALIASES).flat()
+  ];
+  rows.forEach((row, i)=>{
+    const cells = row.map(c => norm(c));
+    let score = 0;
+    cells.forEach(c=>{
+      if(!c) return;
+      if(allAliases.some(a => norm(a) === c)) score++;
+    });
+    if(score > best.score){
+      best = { idx: i, score };
+    }
+  });
+  return best.score >= 2 ? best.idx : 0;
 }
 
-const SJ_TMPL_KEY = 'kontrol_sparepart_sj_template_v1';
+/* ---------- Peta kolom ---------- */
+function mapSjHeaders(headers){
+  const map = {};
+  const used = new Set();
+  headers.forEach((h, idx)=>{
+    const n = norm(h);
+    if(!n) return;
+    for(const [key, aliases] of Object.entries(SJ_ALIASES)){
+      if(used.has(key)) continue;
+      if(aliases.some(a => norm(a) === n)){ map[key] = idx; used.add(key); return; }
+    }
+  });
+  return map;
+}
+function mapSjKeyHeaders(headers){
+  const map = {};
+  const used = new Set();
+  headers.forEach((h, idx)=>{
+    const n = norm(h);
+    if(!n) return;
+    for(const [key, aliases] of Object.entries(SJ_KEY_ALIASES)){
+      if(used.has(key)) continue;
+      if(aliases.some(a => norm(a) === n)){ map[key] = idx; used.add(key); return; }
+    }
+  });
+  return map;
+}
 
-let sjDetected = {};
-let sjMultiResults = [];
-let sjRawText = '';
-let sjFileType = '';
-let sjProcessing = false;
-let sjIsMulti = false;
-let sjTemplates = null;
+/* ---------- Parser utama ---------- */
+function parseSuratJalan(workbook){
+  const ws = workbook.Sheets[workbook.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, { header:1, defval:'', raw:false });
+  if(!rows.length) throw new Error('File kosong');
 
-const EXPEDISI_KEYWORDS = [
-  'JNE','J&T','JNT','SICEPAT','SICEPAT EXPRESS','POS INDONESIA','POS','ANTERAJA',
-  'NINJA XPRESS','NINJA','LION PARCEL','LION','WAHANA','TIKI','REX','ID EXPRESS',
-  'SAP EXPRESS','PAHALA','JDL','INDOPAKET','JET','GOSEND','GRAB EXPRESS','LALAMOVE',
-  'DHL','FEDEX','UPS','TNT','KURIR','EKSPEDISI','EXPEDISI'
-];
+  sjHeaderRow = detectSjHeaderRow(rows);
+  const headers = rows[sjHeaderRow].map(h => String(h || '').trim());
 
-function getDefaultTemplates(){
-  return {
-    nomorSuratJalanP3: {
-      label: 'Nomor Surat Jalan ke P3',
-      patterns: [
-        '(?:no(?:mor)?\\.?\\s*(?:surat\\s*jalan|sj|s\\.?j\\.?)\\s*(?:ke\\s*p3|p3)?)\\s*[:.\\-]?\\s*([A-Z0-9][A-Z0-9\\/\\-\\.]{4,})',
-        '(SJ[\\-\\/][A-Z0-9\\-\\/]{5,})',
-        '(SJ[\\-\\s]?P3[\\-\\s][A-Z0-9\\-\\/]{5,})'
-      ]
-    },
-    sjlKpgSby: {
-      label: 'Sjl KPG - SBY',
-      patterns: [
-        '(?:sjl|surat\\s*jalan)\\s*(?:kpg\\s*[\\-\\s]\\s*sby|kpg\\s*sby)\\s*[:.\\-]?\\s*([A-Z0-9\\/\\-\\.]{5,})',
-        '(SJL[\\/\\-]KPG[\\-\\/][A-Z0-9\\/\\-]{5,})'
-      ]
-    },
-    sjlSby: {
-      label: 'Sjl SBY',
-      patterns: [
-        '(?:sjl|surat\\s*jalan)\\s*(?:sby\\s*[\\-\\s]\\s*kds|sby\\s*kds|sby)\\s*[:.\\-]?\\s*([A-Z0-9\\/\\-\\.]{5,})',
-        '(SJL[\\/\\-]SBY[\\-\\/][A-Z0-9\\/\\-]{5,})'
-      ]
-    },
-    noResiExpedisi: {
-      label: 'NO. RESI / TRACKING EXPEDISI',
-      patterns: [
-        '(?:no\\.?\\s*(?:resi|tracking|awb)|resi|tracking|awb)\\s*[:.\\-]?\\s*([A-Z0-9\\-]{8,})',
-        '\\b([A-Z]{2,4}[\\-\\/]?\\d{6,})\\b'
-      ]
-    },
-    namaExpedisi: {
-      label: 'NAMA EXPEDISI',
-      patterns: [
-        '(?:expedisi|ekspedisi|kurir|jasa\\s*kirim|via)\\s*[:.\\-]?\\s*([A-Za-z&\\.\\s]{3,30})'
-      ],
-      keywords: EXPEDISI_KEYWORDS
-    },
-    noTrukDriver: {
-      label: 'NO TRUK | DRIVER',
-      patterns: [
-        '(?:no\\.?\\s*truk|nopol|plat|nomor\\s*kendaraan)\\s*[:.\\-]?\\s*([A-Z]{1,2}\\s*\\d{1,4}\\s*[A-Z]{1,3})',
-        '(?:driver|pengemudi|nama\\s*driver)\\s*[:.\\-]?\\s*([A-Za-z\\.\\s]{3,30})'
-      ]
+  sjHeaderMap = mapSjHeaders(headers);
+  sjKeyMap = mapSjKeyHeaders(headers);
+
+  const dataRows = rows.slice(sjHeaderRow + 1).filter(r =>
+    r.some(c => String(c).trim() !== '')
+  );
+
+  if(!dataRows.length) throw new Error('Tidak ada baris data setelah header');
+
+  const groups = new Map();
+  dataRows.forEach(r=>{
+    const get = (map, key)=>{
+      const idx = map[key];
+      return idx === undefined ? '' : String(r[idx] ?? '').trim();
+    };
+
+    const btk = get(sjKeyMap, 'buktiTransaksiKirim');
+    const sjNo = get(sjHeaderMap, 'nomorSuratJalanP3');
+    const gk = btk || sjNo || '(Tanpa Grup)';
+
+    if(!groups.has(gk)){
+      groups.set(gk, {
+        key: gk,
+        btk,
+        meta: {
+          nomorSuratJalanP3: get(sjHeaderMap, 'nomorSuratJalanP3'),
+          dikonfirmasiTanggal: get(sjHeaderMap, 'dikonfirmasiTanggal'),
+          sjlKpgSby: get(sjHeaderMap, 'sjlKpgSby'),
+          tglKirimKpgSby: get(sjHeaderMap, 'tglKirimKpgSby'),
+          namaExpedisi: get(sjHeaderMap, 'namaExpedisi'),
+          noResiExpedisi: get(sjHeaderMap, 'noResiExpedisi'),
+          sjlSby: get(sjHeaderMap, 'sjlSby'),
+          tglKirimSby: get(sjHeaderMap, 'tglKirimSby'),
+          noTrukDriver: get(sjHeaderMap, 'noTrukDriver'),
+          tcode: get(sjHeaderMap, 'tcode') || deriveTcode(gk)
+        },
+        items: []
+      });
+    }
+
+    const g = groups.get(gk);
+    Object.keys(g.meta).forEach(k=>{
+      if(!g.meta[k]){
+        const v = get(sjHeaderMap, k);
+        if(v) g.meta[k] = v;
+      }
+    });
+
+    const pn = get(sjKeyMap, 'partNumber');
+    if(pn){
+      g.items.push({
+        partNumber: pn,
+        qty: get(sjKeyMap, 'qty'),
+        nomorSeriMaterial: get(sjKeyMap, 'nomorSeriMaterial'),
+        deskripsiPartNumber: get(sjKeyMap, 'deskripsiPartNumber'),
+        site: get(sjKeyMap, 'site')
+      });
+    }
+  });
+
+  return { groups, headers, headerRow: sjHeaderRow };
+}
+
+/* ---------- File handler ---------- */
+function handleSjFile(file){
+  if(!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if(!['xlsx','xls','csv'].includes(ext)){
+    showSjAlert('Format file tidak didukung. Gunakan .xlsx, .xls, atau .csv', 'err');
+    return;
+  }
+  $('#sjFcName').textContent = file.name;
+  $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · membaca...';
+  $('#sjFileChip').classList.add('show');
+
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const wb = XLSX.read(e.target.result, {type:'binary', cellDates:true, dateNF:'yyyy-mm-dd'});
+      const result = parseSuratJalan(wb);
+      sjGroups = result.groups;
+      sjDetectedMeta = {};
+      result.groups.forEach((g, k)=>{
+        sjDetectedMeta[k] = g.meta;
+        if(!sjDetectedMeta[k].tcode && k && k !== '(Tanpa Grup)'){
+          sjDetectedMeta[k].tcode = deriveTcode(k);
+        }
+      });
+
+      $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) +
+        ' KB · header di baris ' + (result.headerRow + 1) +
+        ' · ' + result.groups.size + ' grup terdeteksi';
+
+      renderSjPreview(result.groups);
+      renderSjMapping(result.headers);
+
+      const detectedCount = Object.keys(sjHeaderMap).length;
+      const keyDetected = Object.keys(sjKeyMap).length;
+      const totalDetected = detectedCount + keyDetected;
+
+      if(totalDetected === 0){
+        showSjAlert('⚠️ Tidak ada kolom SJ yang dikenali. Periksa nama header di file.', 'warn');
+        $('#sjConfirmBtn').disabled = true;
+      }else{
+        showSjAlert('✓ ' + totalDetected + ' kolom terdeteksi (' + detectedCount + ' kolom SJ + ' + keyDetected + ' kolom kunci). Klik "Terapkan ke Data" untuk mengisi info pengiriman.', 'info');
+        $('#sjConfirmBtn').disabled = false;
+      }
+    }catch(err){
+      console.error(err);
+      showSjAlert('Gagal membaca file: ' + err.message, 'err');
+      $('#sjConfirmBtn').disabled = true;
     }
   };
+  reader.readAsBinaryString(file);
 }
 
-function loadSjTemplates(){
-  try{
-    const raw = localStorage.getItem(SJ_TMPL_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(parsed && typeof parsed === 'object') return parsed;
-    }
-  }catch(e){}
-  return getDefaultTemplates();
-}
-function saveSjTemplates(t){
-  try{ localStorage.setItem(SJ_TMPL_KEY, JSON.stringify(t)); }catch(e){}
-  sjTemplates = t;
-}
-function getTemplates(){
-  if(!sjTemplates) sjTemplates = loadSjTemplates();
-  return sjTemplates;
-}
-function safeRegex(pattern){
-  try{ return new RegExp(pattern, 'gi'); }
-  catch(e){ return null; }
-}
+/* ---------- Preview ---------- */
+function renderSjPreview(groups){
+  $('#sjPreviewCount').textContent = groups.size + ' grup';
+  const cols = ['nomorSuratJalanP3','sjlKpgSby','tglKirimKpgSby','namaExpedisi',
+                'noResiExpedisi','sjlSby','tglKirimSby','noTrukDriver','tcode'];
 
-/* ---------- Levenshtein Distance untuk Fuzzy Match ---------- */
-function levenshtein(a, b){
-  a = String(a || '').toUpperCase();
-  b = String(b || '').toUpperCase();
-  if(a === b) return 0;
-  if(!a.length) return b.length;
-  if(!b.length) return a.length;
+  let html = '<table><thead><tr><th>Grup</th>';
+  html += cols.map(k=>{
+    const f = GROUP_FIELDS.find(x=>x.key===k);
+    return `<th>${esc(f ? f.label : k)}</th>`;
+  }).join('');
+  html += '</tr></thead><tbody>';
 
-  const matrix = [];
-  for(let i = 0; i <= b.length; i++) matrix[i] = [i];
-  for(let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  const arr = [...groups.values()];
+  arr.slice(0, 12).forEach(g=>{
+    html += `<tr><td style="font-weight:700;color:#2563eb">${esc(g.key)}</td>`;
+    html += cols.map(k=>`<td>${esc(g.meta[k] || '-')}</td>`).join('');
+    html += '</tr>';
+  });
 
-  for(let i = 1; i <= b.length; i++){
-    for(let j = 1; j <= a.length; j++){
-      if(b.charAt(i-1) === a.charAt(j-1)){
-        matrix[i][j] = matrix[i-1][j-1];
-      }else{
-        matrix[i][j] = Math.min(
-          matrix[i-1][j-1] + 1,
-          matrix[i][j-1] + 1,
-          matrix[i-1][j] + 1
-        );
-      }
-    }
+  if(groups.size > 12){
+    html += `<tr><td colspan="${cols.length+1}" style="text-align:center;color:#64748b;font-size:11px">
+      ... dan ${groups.size - 12} grup lainnya</td></tr>`;
   }
-  return matrix[b.length][a.length];
-}
-function similarity(a, b){
-  const s = Math.max(String(a||'').length, String(b||'').length);
-  if(s === 0) return 1;
-  return 1 - (levenshtein(a, b) / s);
+  html += '</tbody></table>';
+  $('#sjPreviewScroll').innerHTML = html;
+  $('#sjPreviewBox').classList.add('show');
 }
 
-function openSjModal(){
-  sjDetected = {};
-  sjMultiResults = [];
-  sjRawText = '';
-  sjFileType = '';
-  sjProcessing = false;
-  sjIsMulti = false;
-
-  $('#sjFileInput').value = '';
-  $('#sjFileChip').classList.remove('show');
-  $('#sjPreviewBox').classList.remove('show');
-  $('#sjMultiWrap').style.display = 'none';
-  $('#sjTargetWrap').style.display = 'none';
-  $('#sjAlert').classList.remove('show');
-  $('#sjProgress').classList.remove('show');
-  $('#sjRawWrap').classList.remove('show');
-  $('#sjTypePill').style.display = 'none';
-  $('#sjMultiPill').style.display = 'none';
-  $('#sjAutoPill').style.display = 'none';
-  $('#sjAutoBannerWrap').innerHTML = '';
-  $('#sjApplyBtn').disabled = true;
-  $('#sjResetBtn').style.display = 'none';
-  $('#sjApplyBtn').textContent = '✓ Terapkan';
-  $('#sjPreviewTitle').textContent = '🔍 Hasil Deteksi Otomatis';
-
-  const sel = $('#sjTargetGroup');
-  const groups = [...getGroups().keys()].sort();
-  sel.innerHTML = '<option value="">-- Buat grup baru dari No SJ --</option>' +
-    groups.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
-
-  $('#sjOverlay').classList.add('show');
+function renderSjMapping(headers){
+  const listMeta = Object.keys(SJ_ALIASES).map(k=>{
+    const ok = sjHeaderMap[k] !== undefined;
+    const label = GROUP_FIELDS.find(f=>f.key===k)?.label || k;
+    const src = ok ? ` (${headers[sjHeaderMap[k]]})` : '';
+    return `<span class="map-tag ${ok ? 'meta' : 'miss'}">
+      ${ok ? '✓' : '○'} ${esc(label)}${esc(src)}
+    </span>`;
+  }).join('');
+  const listKey = Object.keys(SJ_KEY_ALIASES).map(k=>{
+    const ok = sjKeyMap[k] !== undefined;
+    const label = FIELDS.find(f=>f.key===k)?.label || k;
+    const src = ok ? ` (${headers[sjKeyMap[k]]})` : '';
+    return `<span class="map-tag ${ok ? '' : 'miss'}">
+      ${ok ? '✓' : '○'} ${esc(label)}${esc(src)}
+    </span>`;
+  }).join('');
+  $('#sjMappingList').innerHTML = listMeta + listKey;
+  $('#sjMappingWrap').style.display = 'block';
 }
-function closeSjModal(){
-  if(sjProcessing){
-    if(!confirm('Proses sedang berjalan. Yakin mau tutup?')) return;
-  }
-  $('#sjOverlay').classList.remove('show');
-}
+
 function showSjAlert(msg, type){
   const el = $('#sjAlert');
   el.className = 'alert show ' + (type || 'info');
   el.textContent = msg;
 }
-function setSjProgress(show, label, pct, sub){
-  const wrap = $('#sjProgress');
-  if(show) wrap.classList.add('show');
-  else { wrap.classList.remove('show'); return; }
-  $('#sjProgLabel').textContent = label || 'Memproses…';
-  $('#sjProgPct').textContent = (pct || 0) + '%';
-  $('#sjProgBar').style.width = (pct || 0) + '%';
-  if(sub !== undefined) $('#sjProgSub').textContent = sub;
-}
-function setSjTypePill(type){
-  const map = {
-    pdf: { cls:'pdf', txt:'📕 PDF' },
-    img: { cls:'img', txt:'🖼 Gambar (OCR)' },
-    xls: { cls:'xls', txt:'📊 Excel/CSV' },
-    txt: { cls:'txt', txt:'📄 Teks' }
-  };
-  const info = map[type];
-  const pill = $('#sjTypePill');
-  if(!info){ pill.style.display = 'none'; return; }
-  pill.className = 'sj-type-pill ' + info.cls;
-  pill.textContent = info.txt;
-  pill.style.display = 'inline-block';
-}
 
-async function handleSjFile(file){
-  if(!file || sjProcessing) return;
-
-  const ext = file.name.split('.').pop().toLowerCase();
-  const allowed = ['pdf','jpg','jpeg','png','webp','xlsx','xls','csv','txt'];
-  if(!allowed.includes(ext)){
-    showSjAlert('Format tidak didukung: .' + ext, 'err');
+/* ---------- Terapkan ke data ---------- */
+function applySjToData(){
+  if(!Object.keys(sjDetectedMeta).length){
+    toast('⚠️ Tidak ada data SJ untuk diterapkan');
     return;
   }
 
-  $('#sjFcName').textContent = file.name;
-  $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · membaca...';
-  $('#sjFileChip').classList.add('show');
-  $('#sjResetBtn').style.display = 'inline-flex';
-  sjProcessing = true;
+  let updated = 0;
+  let totalFields = 0;
 
-  try{
-    if(['jpg','jpeg','png','webp'].includes(ext)){
-      sjFileType = 'img';
-      setSjTypePill('img');
-      await extractFromImage(file);
-    }else if(ext === 'pdf'){
-      sjFileType = 'pdf';
-      setSjTypePill('pdf');
-      await extractFromPdf(file);
-    }else if(['xlsx','xls','csv'].includes(ext)){
-      sjFileType = 'xls';
-      setSjTypePill('xls');
-      await extractFromExcel(file);
-    }else{
-      sjFileType = 'txt';
-      setSjTypePill('txt');
-      await extractFromText(file);
-    }
+  Object.entries(sjDetectedMeta).forEach(([gk, meta])=>{
+    // Lewati jika tidak ada field terisi
+    const filled = Object.entries(meta).filter(([k,v]) => v && v !== '');
+    if(!filled.length) return;
 
-    sjMultiResults = detectMultiSj(sjRawText);
-    sjIsMulti = sjMultiResults.length > 1;
-
-    if(sjIsMulti){
-      // ====== MODE MULTI-SJ: AUTO APPLY SEMUA ======
-      applyMultiSjAuto();
-    }else{
-      // ====== MODE SINGLE: AUTO MATCH + AUTO CREATE + AUTO APPLY ======
-      runDetection(sjRawText, sjDetected);
-
-      const count = Object.keys(sjDetected).length;
-      if(count === 0){
-        showSjAlert('⚠️ Tidak ada data yang berhasil dideteksi dari file ini.', 'warn');
-        $('#sjApplyBtn').disabled = true;
-        $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · 0 field';
-      }else{
-        // Coba auto-match ke grup yang cocok (exact → fuzzy → resi)
-        const matchResult = autoMatchGroupAdvanced(sjDetected);
-
-        let targetGroup = '';
-        let createNew = false;
-
-        if(matchResult.group){
-          // ✅ Cocok → auto apply
-          targetGroup = matchResult.group;
-        }else{
-          // ❌ Tidak cocok → auto-create grup baru dari No SJ
-          targetGroup = guessNewGroupName(sjDetected);
-          if(targetGroup){
-            createNew = true;
-          }
-        }
-
-        if(targetGroup){
-          // AUTO APPLY
-          const meta = getMeta(targetGroup);
-          const filled = Object.keys(sjDetected).filter(k => String(sjDetected[k] || '').trim() !== '');
-          filled.forEach(k => { meta[k] = String(sjDetected[k]).trim(); });
-          stampMeta(meta);
-          if(!meta.tcode){
-            const tc = deriveTcode(targetGroup);
-            if(tc) meta.tcode = tc;
-          }
-          setMeta(targetGroup, meta);
-          renderTable();
-
-          // Tampilkan banner sukses
-          renderSjAutoBanner(targetGroup, filled.length, createNew, matchResult.matchType);
-          renderSjPreviewReadOnly(targetGroup, filled.length);
-          showSjAlert(`✅ Berhasil! ${filled.length} field otomatis terisi ke grup "${targetGroup}"`, 'success');
-          $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · ✅ AUTO-APPLIED';
-          $('#sjTargetWrap').style.display = 'none';
-          $('#sjApplyBtn').disabled = true;
-          $('#sjApplyBtn').textContent = '✅ Sudah Diterapkan';
-          $('#sjAutoPill').style.display = 'inline-block';
-
-          toast(`✅ ${filled.length} field otomatis terisi ke "${targetGroup}"`);
-
-          // Auto-close modal setelah 3 detik
-          setTimeout(() => {
-            if($('#sjOverlay').classList.contains('show') && !sjProcessing){
-              closeSjModal();
-            }
-          }, 3000);
-        }else{
-          // Fallback: tidak bisa auto-create → pilih manual
-          showSjAlert(`⚠️ Tidak bisa menentukan grup target otomatis. Silakan pilih manual di bawah.`, 'warn');
-          renderSjPreview();
-          $('#sjTargetWrap').style.display = 'block';
-          $('#sjApplyBtn').disabled = false;
-          $('#sjApplyBtn').textContent = '✓ Terapkan Manual';
-          $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · perlu pilih grup';
-        }
-      }
-    }
-
-    showRawText();
-  }catch(err){
-    console.error(err);
-    showSjAlert('❌ Gagal memproses file: ' + err.message, 'err');
-  }finally{
-    sjProcessing = false;
-    setSjProgress(false);
-  }
-}
-
-/* ---------- AUTO-MATCH ADVANCED (exact → substring → fuzzy → resi) ---------- */
-function autoMatchGroupAdvanced(det){
-  const groups = [...getGroups().keys()];
-  const sjNo = String(det.nomorSuratJalanP3 || '').trim().toUpperCase();
-  const resi = String(det.noResiExpedisi || '').trim().toUpperCase();
-
-  // 1) Exact match ke buktiTransaksiKirim
-  if(sjNo){
-    const hit = groups.find(g => g.toUpperCase() === sjNo);
-    if(hit) return { group: hit, matchType: 'exact-btk' };
-  }
-
-  // 2) Exact match ke nomorSuratJalanP3 di meta
-  if(sjNo){
-    for(const g of groups){
-      const meta = getMeta(g);
-      const mSJ = String(meta.nomorSuratJalanP3 || '').trim().toUpperCase();
-      if(mSJ && mSJ === sjNo){
-        return { group: g, matchType: 'exact-sj' };
-      }
-    }
-  }
-
-  // 3) Substring match
-  if(sjNo){
-    const hit = groups.find(g => 
-      g.toUpperCase().includes(sjNo) || sjNo.includes(g.toUpperCase())
-    );
-    if(hit) return { group: hit, matchType: 'substring' };
-  }
-
-  // 4) Resi match
-  if(resi){
-    for(const g of groups){
-      const meta = getMeta(g);
-      const mResi = String(meta.noResiExpedisi || '').trim().toUpperCase();
-      if(mResi && (mResi === resi || mResi.includes(resi) || resi.includes(mResi))){
-        return { group: g, matchType: 'resi' };
-      }
-    }
-  }
-
-  // 5) Fuzzy match (similarity ≥ 0.75)
-  if(sjNo && sjNo.length >= 6){
-    let best = null;
-    let bestScore = 0;
-    for(const g of groups){
-      const score = similarity(sjNo, g);
-      if(score > bestScore && score >= 0.75){
-        best = g;
-        bestScore = score;
-      }
-      // Cek juga terhadap nomorSuratJalanP3 di meta
-      const meta = getMeta(g);
-      const mSJ = String(meta.nomorSuratJalanP3 || '').trim().toUpperCase();
-      if(mSJ){
-        const s2 = similarity(sjNo, mSJ);
-        if(s2 > bestScore && s2 >= 0.75){
-          best = g;
-          bestScore = s2;
-        }
-      }
-    }
-    if(best) return { group: best, matchType: 'fuzzy', score: bestScore };
-  }
-
-  return { group: '', matchType: 'none' };
-}
-
-/* ---------- GUESS NEW GROUP NAME dari No SJ ---------- */
-function guessNewGroupName(det){
-  const sj = String(det.nomorSuratJalanP3 || '').trim();
-  if(!sj) return '';
-  // Bersihkan karakter aneh
-  return sj.replace(/[^A-Za-z0-9\/\-\.]/g, '').slice(0, 60);
-}
-
-/* ---------- RENDER BANNER AUTO-APPLY ---------- */
-function renderSjAutoBanner(targetGroup, fieldCount, isNew, matchType){
-  const matchLabels = {
-    'exact-btk': '🎯 Exact match Bukti Transaksi',
-    'exact-sj': '🎯 Exact match Nomor Surat Jalan',
-    'substring': '🔍 Substring match',
-    'resi': '📦 Match via Nomor Resi',
-    'fuzzy': '🧠 Fuzzy match (kemiripan tinggi)',
-    'none': '🆕 Grup Baru Dibuat'
-  };
-
-  const banner = `
-    <div class="sj-auto-banner">
-      <div class="big-ic">✅</div>
-      <div style="flex:1;min-width:0">
-        <div class="ttl">Otomatis Terisi!</div>
-        <div class="sub">
-          <b>${fieldCount} field</b> berhasil diterapkan ke grup: <b>${esc(targetGroup)}</b>
-          ${isNew ? ' <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:12px;font-size:10.5px;margin-left:6px">🆕 Grup Baru</span>' : ''}
-        </div>
-        <div class="sub" style="margin-top:4px;font-size:11px">
-          ${esc(matchLabels[matchType] || '-')}
-        </div>
-      </div>
-    </div>
-  `;
-  $('#sjAutoBannerWrap').innerHTML = banner;
-}
-
-/* ---------- EXTRACTORS ---------- */
-function extractFromText(file){
-  return new Promise((resolve, reject) => {
-    setSjProgress(true, 'Membaca file teks…', 30, 'Mohon tunggu');
-    const reader = new FileReader();
-    reader.onload = e => {
-      sjRawText = String(e.target.result || '');
-      setSjProgress(true, 'Deteksi berjalan…', 100, 'Selesai');
-      resolve();
-    };
-    reader.onerror = () => reject(new Error('Gagal membaca file'));
-    reader.readAsText(file);
-  });
-}
-
-function extractFromExcel(file){
-  return new Promise((resolve, reject) => {
-    setSjProgress(true, 'Membaca file Excel…', 30, 'Mohon tunggu');
-    const reader = new FileReader();
-    reader.onload = e => {
-      try{
-        const wb = XLSX.read(e.target.result, {type:'binary', cellDates:true});
-        let allText = '';
-        wb.SheetNames.forEach(sn => {
-          const ws = wb.Sheets[sn];
-          const json = XLSX.utils.sheet_to_json(ws, {defval:'', header:1, raw:false});
-          json.forEach(row => {
-            if(Array.isArray(row)){
-              const line = row.map(v => String(v ?? '').trim()).filter(Boolean).join(' | ');
-              if(line) allText += line + '\n';
-            }
-          });
-        });
-        sjRawText = allText;
-        setSjProgress(true, 'Deteksi berjalan…', 100, 'Selesai');
-        resolve();
-      }catch(err){ reject(err); }
-    };
-    reader.onerror = () => reject(new Error('Gagal membaca file'));
-    reader.readAsBinaryString(file);
-  });
-}
-
-async function extractFromPdf(file){
-  if(!window.pdfjsLib){ throw new Error('PDF.js tidak tersedia'); }
-  setSjProgress(true, 'Membaca file PDF…', 10, 'Membuka dokumen');
-  const buf = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-  const total = pdf.numPages;
-  let allText = '';
-
-  for(let i = 1; i <= total; i++){
-    setSjProgress(true, `Memproses halaman ${i} dari ${total}…`,
-      Math.round((i/total) * 55), 'Ekstraksi teks dari PDF…');
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    const strings = content.items.map(it => it.str).join(' ');
-    allText += strings + '\n--- PAGE BREAK ---\n';
-  }
-
-  if(allText.replace(/\s/g,'').length < 20){
-    setSjProgress(true, 'PDF tidak punya layer teks…', 60,
-      'Menjalankan OCR pada halaman (mungkin butuh waktu)…');
-    allText = '';
-    for(let i = 1; i <= total; i++){
-      setSjProgress(true, `OCR halaman ${i} dari ${total}…`,
-        60 + Math.round((i/total) * 35), 'Mengenali teks dari gambar PDF…');
-      const page = await pdf.getPage(i);
-      const viewport = page.getViewport({ scale: 2 });
-      const canvas = document.createElement('canvas');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      const ctx = canvas.getContext('2d');
-      await page.render({ canvasContext: ctx, viewport }).promise;
-      const dataUrl = canvas.toDataURL('image/png');
-      const { data:{ text } } = await Tesseract.recognize(dataUrl, 'ind+eng', {
-        logger: m => {
-          if(m.status === 'recognizing text'){
-            const p = 60 + Math.round((i-1)/total*35) + Math.round((m.progress||0)/total*35);
-            setSjProgress(true, `OCR halaman ${i} dari ${total}…`, Math.min(p, 98), 'Mengenali teks…');
-          }
-        }
-      });
-      allText += text + '\n--- PAGE BREAK ---\n';
-    }
-  }
-
-  setSjProgress(true, 'Deteksi berjalan…', 100, 'Selesai');
-  sjRawText = allText;
-}
-
-async function extractFromImage(file){
-  if(!window.Tesseract){ throw new Error('Tesseract.js tidak tersedia'); }
-  setSjProgress(true, 'Menyiapkan OCR…', 5, 'Memuat gambar');
-  const dataUrl = await new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = e => res(e.target.result);
-    r.onerror = () => rej(new Error('Gagal baca gambar'));
-    r.readAsDataURL(file);
-  });
-
-  setSjProgress(true, 'Menjalankan OCR…', 15, 'Mengenali teks dari gambar (5-30 detik)…');
-  const { data:{ text } } = await Tesseract.recognize(dataUrl, 'ind+eng', {
-    logger: m => {
-      if(m.status === 'loading tesseract core') setSjProgress(true, 'Memuat mesin OCR…', 10, 'Sekali saja, akan di-cache');
-      else if(m.status === 'initializing tesseract') setSjProgress(true, 'Inisialisasi OCR…', 20, 'Menyiapkan bahasa ind+eng');
-      else if(m.status === 'loading language traineddata') setSjProgress(true, 'Memuat data bahasa…', 30, 'ind+eng');
-      else if(m.status === 'recognizing text'){
-        const p = 40 + Math.round((m.progress || 0) * 55);
-        setSjProgress(true, 'Mengenali teks…', p, 'Menganalisis gambar…');
-      }
-    }
-  });
-
-  setSjProgress(true, 'Deteksi berjalan…', 100, 'Selesai');
-  sjRawText = text || '';
-}
-
-/* ---------- DETECTION ENGINE ---------- */
-function runDetection(text, target){
-  const out = target || {};
-  if(!text) return out;
-
-  const clean = text.replace(/\s+/g,' ');
-  const templates = getTemplates();
-
-  Object.keys(templates).forEach(fieldKey => {
-    const tmpl = templates[fieldKey];
-    if(!tmpl || !Array.isArray(tmpl.patterns)) return;
-
-    for(const pat of tmpl.patterns){
-      const re = safeRegex(pat);
-      if(!re) continue;
-      const m = re.exec(clean);
-      if(m && m[1]){
-        let val = m[1].trim().replace(/\s+/g,' ').replace(/[|;,.]+$/,'').trim();
-
-        if(fieldKey === 'namaExpedisi'){
-          const up = val.toUpperCase();
-          const kws = tmpl.keywords || EXPEDISI_KEYWORDS;
-          const hit = kws.find(k => up.includes(k));
-          if(hit){ out[fieldKey] = hit; break; }
-        }else{
-          if(val.length >= 4){ out[fieldKey] = val; break; }
-        }
-      }
-    }
-  });
-
-  if(!out.namaExpedisi){
-    const up = clean.toUpperCase();
-    for(const kw of EXPEDISI_KEYWORDS){
-      const re = new RegExp('\\b' + kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b');
-      if(re.test(up)){ out.namaExpedisi = kw; break; }
-    }
-  }
-
-  if(!out.dikonfirmasiTanggal){
-    const m1 = clean.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
-    const m2 = clean.match(/(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
-    const pad = n => String(n).padStart(2,'0');
-    if(m1) out.dikonfirmasiTanggal = `${m1[1]}-${pad(m1[2])}-${pad(m1[3])}`;
-    else if(m2) out.dikonfirmasiTanggal = `${m2[3]}-${pad(m2[2])}-${pad(m2[1])}`;
-  }
-
-  if(out.nomorSuratJalanP3 && !out.tcode){
-    const tc = deriveTcode(out.nomorSuratJalanP3);
-    if(tc) out.tcode = tc;
-  }
-
-  return out;
-}
-
-/* ---------- MULTI-SJ DETECTION ---------- */
-function detectMultiSj(text){
-  if(!text) return [];
-  const clean = text.replace(/\r/g,'').trim();
-  if(!clean) return [];
-
-  const anchors = [];
-  const anchorRe = /(?:no(?:mor)?\.?\s*(?:surat\s*jalan|sj|s\.?j\.?)\s*(?:ke\s*p3|p3)?)\s*[:.\-]?\s*([A-Z0-9][A-Z0-9\/\-\.]{4,})/gi;
-  let m;
-  while((m = anchorRe.exec(clean)) !== null){
-    anchors.push({ index: m.index, value: m[1] });
-  }
-
-  if(anchors.length === 0){
-    const altRe = /(SJ[\-\/][A-Z0-9\-\/]{5,})/gi;
-    while((m = altRe.exec(clean)) !== null){
-      anchors.push({ index: m.index, value: m[1] });
-    }
-  }
-
-  if(anchors.length <= 1) return [];
-
-  const blocks = [];
-  for(let i = 0; i < anchors.length; i++){
-    const start = anchors[i].index;
-    const end = (i+1 < anchors.length) ? anchors[i+1].index : clean.length;
-    const block = clean.slice(start, end);
-    const det = runDetection(block, {});
-    if(!det.nomorSuratJalanP3) det.nomorSuratJalanP3 = anchors[i].value;
-    if(!det.tcode) det.tcode = deriveTcode(det.nomorSuratJalanP3);
-
-    const matchResult = autoMatchGroupAdvanced(det);
-    let targetGroup = matchResult.group;
-    let isNew = false;
-    if(!targetGroup){
-      targetGroup = guessNewGroupName(det);
-      if(targetGroup) isNew = true;
-    }
-
-    blocks.push({
-      fields: det,
-      matchedGroup: targetGroup || '',
-      matchType: matchResult.matchType,
-      isNew: isNew,
-      rawBlock: block.slice(0, 500)
+    const existing = groupMeta[gk] || {};
+    const merged = { ...existing };
+    filled.forEach(([k, v])=>{
+      // Isi hanya jika kosong ATAU timpa dengan nilai baru
+      merged[k] = v;
+      totalFields++;
     });
-  }
-
-  return blocks;
-}
-
-/* ---------- AUTO APPLY MULTI-SJ ---------- */
-function applyMultiSjAuto(){
-  const applied = [];
-  const failed = [];
-
-  sjMultiResults.forEach(r => {
-    const targetKey = r.matchedGroup;
-    if(!targetKey){
-      failed.push(r);
-      return;
+    if(currentUser){
+      merged.diubahOleh = emailToUsername(currentUser.email || '');
     }
-
-    const meta = getMeta(targetKey);
-    const filled = Object.keys(r.fields).filter(k => String(r.fields[k] || '').trim() !== '');
-    filled.forEach(k => { meta[k] = String(r.fields[k]).trim(); });
-    stampMeta(meta);
-    if(!meta.tcode){
-      const tc = deriveTcode(targetKey);
-      if(tc) meta.tcode = tc;
-    }
-    setMeta(targetKey, meta);
-
-    applied.push({
-      group: targetKey,
-      count: filled.length,
-      isNew: r.isNew,
-      matchType: r.matchType,
-      sjNo: r.fields.nomorSuratJalanP3 || ''
-    });
+    groupMeta[gk] = merged;
+    updated++;
   });
 
-  renderTable();
-
-  $('#sjMultiPill').style.display = 'inline-block';
-  $('#sjAutoPill').style.display = applied.length > 0 ? 'inline-block' : 'none';
-  $('#sjMultiCount').textContent = sjMultiResults.length;
-  $('#sjMultiWrap').style.display = 'block';
-  $('#sjPreviewBox').classList.remove('show');
-  $('#sjTargetWrap').style.display = 'none';
-  $('#sjApplyBtn').disabled = true;
-  $('#sjApplyBtn').textContent = applied.length > 0 ? '✅ Sudah Diterapkan' : '✓ Terapkan';
-  $('#sjFcMeta').textContent = '✅ ' + applied.length + ' SJ auto-applied' +
-    (failed.length ? ' · ⚠ ' + failed.length + ' gagal' : '');
-
-  renderMultiSjAutoResult(applied, failed);
-
-  if(failed.length === 0){
-    showSjAlert(`✅ Berhasil! ${applied.length} Surat Jalan otomatis terisi ke grup masing-masing.`, 'success');
-    toast(`✅ ${applied.length} SJ otomatis terisi`);
-
-    setTimeout(() => {
-      if($('#sjOverlay').classList.contains('show') && !sjProcessing){
-        closeSjModal();
-      }
-    }, 3500);
-  }else{
-    showSjAlert(`✅ ${applied.length} SJ otomatis terisi · ⚠ ${failed.length} SJ gagal (No SJ tidak valid).`, 'warn');
-  }
-}
-
-/* ---------- RENDER MULTI-SJ AUTO RESULT ---------- */
-function renderMultiSjAutoResult(applied, failed){
-  const wrap = $('#sjMultiList');
-
-  let html = '';
-
-  if(applied.length > 0){
-    html += `<div class="sj-auto-banner">
-      <div class="big-ic">✅</div>
-      <div style="flex:1;min-width:0">
-        <div class="ttl">${applied.length} Surat Jalan Berhasil Diterapkan!</div>
-        <div class="sub">Semua data otomatis terisi ke grup masing-masing</div>
-      </div>
-    </div>`;
-
-    html += applied.map(r => {
-      const matchLabels = {
-        'exact-btk': '🎯 Exact BTK',
-        'exact-sj': '🎯 Exact SJ',
-        'substring': '🔍 Substring',
-        'resi': '📦 Resi',
-        'fuzzy': '🧠 Fuzzy',
-        'none': '🆕 Grup Baru'
-      };
-      return `
-        <div class="sj-auto-card">
-          <div class="ic">✓</div>
-          <div class="info">
-            <div class="gname">${esc(r.group)}</div>
-            <div class="gmeta">
-              ${r.count} field terisi
-              ${r.isNew ? ' · 🆕 Grup Baru' : ''}
-              · ${esc(matchLabels[r.matchType] || 'Auto')}
-              ${r.sjNo ? ' · No SJ: ' + esc(r.sjNo) : ''}
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  if(failed.length > 0){
-    html += `<div style="font-size:11.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.4px;margin-top:16px;margin-bottom:8px">
-      ⚠ ${failed.length} SJ Gagal Diproses
-    </div>`;
-
-    html += failed.map((r, idx) => `
-      <div class="sj-warn-card">
-        <div class="head">
-          <div class="ic">⚠</div>
-          <div class="gname">${esc(r.fields.nomorSuratJalanP3 || '(tanpa No SJ)')}</div>
-        </div>
-        <div style="font-size:11.5px;color:#78350f">
-          Nomor Surat Jalan tidak ditemukan di file. Periksa kembali isi file atau isi manual.
-        </div>
-      </div>
-    `).join('');
-  }
-
-  wrap.innerHTML = html;
-}
-
-/* ---------- RENDER PREVIEW READ-ONLY ---------- */
-function renderSjPreviewReadOnly(matchedGroup, fieldCount){
-  const keys = Object.keys(sjDetected).filter(k => String(sjDetected[k] || '').trim() !== '');
-  $('#sjPreviewTitle').textContent = '✅ Hasil Auto-Apply (Read-Only)';
-  $('#sjPreviewCount').textContent = fieldCount + ' field';
-
-  let html = `
-    <div style="padding:12px 14px;background:#dcfce7;border-bottom:1px solid #a7f3d0;font-size:12.5px;color:#065f46;font-weight:700;display:flex;align-items:center;gap:10px">
-      <span style="font-size:18px">✅</span>
-      <span>Berhasil diterapkan ke grup: <b>${esc(matchedGroup)}</b></span>
-    </div>
-    <table class="sj-preview-tbl"><thead><tr>
-      <th>Field</th><th>Nilai Terisi</th>
-    </tr></thead><tbody>`;
-
-  keys.forEach(k => {
-    const f = GROUP_FIELDS.find(x => x.key === k);
-    const label = f ? f.label : k;
-    html += `<tr>
-      <td class="lbl-cell">${esc(label)}</td>
-      <td style="color:#065f46;font-weight:600">✓ ${esc(sjDetected[k])}</td>
-    </tr>`;
-  });
-  html += '</tbody></table>';
-
-  $('#sjPreviewScroll').innerHTML = html;
-  $('#sjPreviewBox').classList.add('show');
-}
-
-/* ---------- RENDER SINGLE PREVIEW (fallback manual) ---------- */
-function renderSjPreview(){
-  const keys = Object.keys(sjDetected);
-  $('#sjPreviewTitle').textContent = '🔍 Hasil Deteksi (bisa diedit)';
-  $('#sjPreviewCount').textContent = keys.length + ' field';
-
-  if(keys.length === 0){
-    $('#sjPreviewScroll').innerHTML =
-      '<div style="padding:24px;text-align:center;color:#94a3b8">Tidak ada field terdeteksi</div>';
-    $('#sjPreviewBox').classList.add('show');
+  if(updated === 0){
+    toast('⚠️ Tidak ada field SJ yang bisa diterapkan');
     return;
   }
 
-  let html = '<table class="sj-preview-tbl"><thead><tr>' +
-    '<th>Field</th><th>Nilai Terdeteksi</th><th style="text-align:center">Hapus</th>' +
-    '</tr></thead><tbody>';
-
-  keys.forEach(k => {
-    const f = GROUP_FIELDS.find(x => x.key === k);
-    const label = f ? f.label : k;
-    html += `<tr>
-      <td class="lbl-cell">${esc(label)}</td>
-      <td class="val-cell"><input type="text" data-field="${esc(k)}" value="${esc(sjDetected[k])}"></td>
-      <td class="del-cell"><button data-field="${esc(k)}" title="Hapus">✕</button></td>
-    </tr>`;
-  });
-  html += '</tbody></table>';
-
-  $('#sjPreviewScroll').innerHTML = html;
-  $('#sjPreviewBox').classList.add('show');
-
-  $('#sjPreviewScroll').querySelectorAll('input[data-field]').forEach(inp => {
-    inp.addEventListener('input', e => { sjDetected[e.target.dataset.field] = e.target.value; });
-  });
-  $('#sjPreviewScroll').querySelectorAll('.del-cell button').forEach(b => {
-    b.addEventListener('click', () => {
-      delete sjDetected[b.dataset.field];
-      renderSjPreview();
-    });
-  });
-}
-
-function showRawText(){
-  const raw = (sjRawText || '').trim();
-  if(!raw){ $('#sjRawWrap').classList.remove('show'); return; }
-  $('#sjRawText').textContent = raw.length > 6000 ? raw.slice(0, 6000) + '\n\n... (terpotong)' : raw;
-  $('#sjRawWrap').classList.add('show');
-}
-
-/* ---------- APPLY MANUAL (fallback single) ---------- */
-function applySjToGroup(){
-  if(sjIsMulti) return;
-
-  let targetKey = $('#sjTargetGroup').value;
-  if(!targetKey){
-    // Buat grup baru dari No SJ
-    targetKey = guessNewGroupName(sjDetected);
-    if(!targetKey){
-      showSjAlert('⚠️ Tidak bisa menentukan nama grup. Isi Nomor Surat Jalan dulu.', 'warn');
-      return;
-    }
-    toast(`🆕 Grup baru dibuat: "${targetKey}"`);
-  }
-
-  const filled = Object.keys(sjDetected).filter(k => String(sjDetected[k] || '').trim() !== '');
-  if(filled.length === 0){
-    showSjAlert('⚠️ Tidak ada field untuk diterapkan.', 'warn');
-    return;
-  }
-
-  const meta = getMeta(targetKey);
-  filled.forEach(k => { meta[k] = String(sjDetected[k]).trim(); });
-  stampMeta(meta);
-  if(!meta.tcode){
-    const tc = deriveTcode(targetKey);
-    if(tc) meta.tcode = tc;
-  }
-  setMeta(targetKey, meta);
+  saveMeta();
   renderTable();
   closeSjModal();
-  toast(`✅ ${filled.length} field diterapkan ke "${targetKey}"`);
+  toast('✅ ' + updated + ' grup diperbarui (' + totalFields + ' field terisi)');
 }
 
-function stampMeta(meta){
-  if(currentUser){
-    meta.diubahOleh = emailToUsername(currentUser.email || '');
-    const now = new Date();
-    const pad = n => String(n).padStart(2,'0');
-    meta.diubahPada = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  }
+/* ---------- Modal control ---------- */
+function openSjModal(){
+  sjGroups = new Map();
+  sjDetectedMeta = {};
+  sjHeaderRow = -1;
+  sjHeaderMap = {};
+  sjKeyMap = {};
+  $('#sjFileInput').value = '';
+  $('#sjFileChip').classList.remove('show');
+  $('#sjPreviewBox').classList.remove('show');
+  $('#sjMappingWrap').style.display = 'none';
+  $('#sjAlert').classList.remove('show');
+  $('#sjConfirmBtn').disabled = true;
+  $('#sjOverlay').classList.add('show');
 }
-
-/* ---------- TEMPLATE EDITOR ---------- */
-function openSjTmplModal(){
-  renderSjTmplList();
-  $('#sjTmplOverlay').classList.add('show');
-}
-function closeSjTmplModal(){
-  $('#sjTmplOverlay').classList.remove('show');
-}
-function renderSjTmplList(){
-  const t = getTemplates();
-  const wrap = $('#sjTmplList');
-
-  wrap.innerHTML = Object.keys(t).map(fKey => {
-    const item = t[fKey];
-    const patterns = item.patterns || [];
-    const patRows = patterns.map((p, pi) => `
-      <div class="pat-row">
-        <label>Pola ${pi+1}</label>
-        <input type="text" data-field="${esc(fKey)}" data-pat-idx="${pi}" value="${esc(p)}">
-        <button type="button" class="del-pat" data-del-pat-field="${esc(fKey)}" data-del-pat-idx="${pi}">✕</button>
-      </div>
-    `).join('');
-
-    const kwRow = fKey === 'namaExpedisi'
-      ? `<div class="pat-row">
-           <label>Keywords</label>
-           <input type="text" data-field="${esc(fKey)}" data-kw="1" value="${esc((item.keywords||[]).join(', '))}" placeholder="Pisahkan dengan koma">
-           <span></span>
-         </div>`
-      : '';
-
-    return `<div class="sj-tmpl-item" data-tmpl-field="${esc(fKey)}">
-      <div class="head">
-        <div class="name">${esc(item.label || fKey)}</div>
-      </div>
-      ${patRows}
-      ${kwRow}
-      <div class="sj-tmpl-add" data-add-pat="${esc(fKey)}">➕ Tambah Pola Regex</div>
-    </div>`;
-  }).join('');
-
-  wrap.querySelectorAll('[data-add-pat]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const fKey = btn.dataset.addPat;
-      const cur = collectTmplFromUI();
-      if(!cur[fKey]) return;
-      cur[fKey].patterns.push('');
-      saveSjTemplates(cur);
-      renderSjTmplList();
-    });
-  });
-  wrap.querySelectorAll('[data-del-pat-field]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const fKey = btn.dataset.delPatField;
-      const pi = Number(btn.dataset.delPatIdx);
-      const cur = collectTmplFromUI();
-      if(cur[fKey] && cur[fKey].patterns.length > 1){
-        cur[fKey].patterns.splice(pi, 1);
-        saveSjTemplates(cur);
-        renderSjTmplList();
-      }else{
-        toast('⚠️ Minimal 1 pola per field');
-      }
-    });
-  });
-}
-
-function collectTmplFromUI(){
-  const base = getTemplates();
-  const out = JSON.parse(JSON.stringify(base));
-  const wrap = $('#sjTmplList');
-
-  wrap.querySelectorAll('input[data-field][data-pat-idx]').forEach(inp => {
-    const fKey = inp.dataset.field;
-    const pi = Number(inp.dataset.patIdx);
-    if(out[fKey] && out[fKey].patterns[pi] !== undefined){
-      out[fKey].patterns[pi] = inp.value;
-    }
-  });
-  wrap.querySelectorAll('input[data-kw="1"]').forEach(inp => {
-    const fKey = inp.dataset.field;
-    if(out[fKey]){
-      out[fKey].keywords = inp.value.split(',').map(s => s.trim()).filter(Boolean);
-    }
-  });
-  return out;
-}
-
-function saveTmplFromUI(){
-  const t = collectTmplFromUI();
-  let badCount = 0;
-  Object.keys(t).forEach(f => {
-    (t[f].patterns || []).forEach((p, i) => {
-      if(p && !safeRegex(p)){
-        badCount++;
-      }
-    });
-  });
-  if(badCount > 0){
-    if(!confirm(`Ada ${badCount} regex tidak valid. Tetap simpan?`)) return;
-  }
-  saveSjTemplates(t);
-  closeSjTmplModal();
-  toast('✅ Template deteksi disimpan');
-}
-
-/* ---------- BIND SJ MODAL ---------- */
-function bindSjModal(){
-  const uploadBtn = $('#uploadSjBtn');
-  if(!uploadBtn) return;
-
-  uploadBtn.addEventListener('click', openSjModal);
-  $('#sjCloseX').addEventListener('click', closeSjModal);
-  $('#sjCancelBtn').addEventListener('click', closeSjModal);
-  $('#sjApplyBtn').addEventListener('click', applySjToGroup);
-  $('#sjOverlay').addEventListener('click', e => { if(e.target.id === 'sjOverlay') closeSjModal(); });
-
-  $('#sjResetBtn').addEventListener('click', () => {
-    if(sjProcessing) return;
-    sjDetected = {};
-    sjMultiResults = [];
-    sjRawText = '';
-    sjIsMulti = false;
-    $('#sjFileInput').value = '';
-    $('#sjFileChip').classList.remove('show');
-    $('#sjPreviewBox').classList.remove('show');
-    $('#sjMultiWrap').style.display = 'none';
-    $('#sjTargetWrap').style.display = 'none';
-    $('#sjAlert').classList.remove('show');
-    $('#sjRawWrap').classList.remove('show');
-    $('#sjTypePill').style.display = 'none';
-    $('#sjMultiPill').style.display = 'none';
-    $('#sjAutoPill').style.display = 'none';
-    $('#sjAutoBannerWrap').innerHTML = '';
-    $('#sjApplyBtn').disabled = true;
-    $('#sjApplyBtn').textContent = '✓ Terapkan';
-    $('#sjResetBtn').style.display = 'none';
-  });
-
-  $('#sjToggleRaw').addEventListener('click', () => {
-    const el = $('#sjRawText');
-    const btn = $('#sjToggleRaw');
-    if(el.style.display === 'none'){
-      el.style.display = '';
-      btn.textContent = 'Sembunyikan';
-    }else{
-      el.style.display = 'none';
-      btn.textContent = 'Tampilkan';
-    }
-  });
-
-  const dz = $('#sjDropZone');
-  const fi = $('#sjFileInput');
-  dz.addEventListener('click', () => { if(!sjProcessing) fi.click(); });
-  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
-  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
-  dz.addEventListener('drop', e => {
-    e.preventDefault(); dz.classList.remove('drag');
-    if(sjProcessing) return;
-    const f = e.dataTransfer.files[0];
-    if(f) handleSjFile(f);
-  });
-  fi.addEventListener('change', e => {
-    const f = e.target.files[0];
-    if(f) handleSjFile(f);
-  });
-  $('#sjFcRemove').addEventListener('click', () => {
-    if(sjProcessing) return;
-    $('#sjResetBtn').click();
-  });
-
-  $('#templateSjBtn').addEventListener('click', openSjTmplModal);
-  $('#sjTmplCloseX').addEventListener('click', closeSjTmplModal);
-  $('#sjTmplCancelBtn').addEventListener('click', closeSjTmplModal);
-  $('#sjTmplSaveBtn').addEventListener('click', saveTmplFromUI);
-  $('#sjTmplResetAllBtn').addEventListener('click', () => {
-    if(!confirm('Reset semua template ke default?')) return;
-    saveSjTemplates(getDefaultTemplates());
-    renderSjTmplList();
-    toast('🔄 Template direset ke default');
-  });
-  $('#sjTmplOverlay').addEventListener('click', e => { if(e.target.id === 'sjTmplOverlay') closeSjTmplModal(); });
+function closeSjModal(){
+  $('#sjOverlay').classList.remove('show');
 }
 
 /* =========================================================
@@ -3154,6 +2327,7 @@ function init(){
     openMetaModal(key);
   });
 
+  /* ---- Dropdown Export ---- */
   $('#exportBtn').addEventListener('click', e=>{
     e.stopPropagation();
     $('#exportMenu').classList.toggle('show');
@@ -3173,6 +2347,7 @@ function init(){
 
   $('#templateBtn').addEventListener('click', downloadTemplateExcel);
 
+  /* ---- Import Excel ---- */
   $('#importBtn').addEventListener('click', openImportModal);
   $('#importCloseX').addEventListener('click', closeImportModal);
   $('#importCancelBtn').addEventListener('click', closeImportModal);
@@ -3205,13 +2380,42 @@ function init(){
     $('#importConfirmBtn').disabled = true;
   });
 
-  bindSjModal();
+  /* ---- Import Surat Jalan ---- */
+  $('#sjImportBtn').addEventListener('click', openSjModal);
+  $('#sjCloseX').addEventListener('click', closeSjModal);
+  $('#sjCancelBtn').addEventListener('click', closeSjModal);
+  $('#sjConfirmBtn').addEventListener('click', applySjToData);
+  $('#sjOverlay').addEventListener('click', e=>{ if(e.target.id === 'sjOverlay') closeSjModal(); });
 
+  const sjDz = $('#sjDropZone');
+  const sjFi = $('#sjFileInput');
+  sjDz.addEventListener('click', ()=> sjFi.click());
+  sjDz.addEventListener('dragover', e=>{ e.preventDefault(); sjDz.classList.add('drag'); });
+  sjDz.addEventListener('dragleave', ()=> sjDz.classList.remove('drag'));
+  sjDz.addEventListener('drop', e=>{
+    e.preventDefault(); sjDz.classList.remove('drag');
+    const f = e.dataTransfer.files[0];
+    if(f) handleSjFile(f);
+  });
+  sjFi.addEventListener('change', e=>{
+    const f = e.target.files[0];
+    if(f) handleSjFile(f);
+  });
+  $('#sjFcRemove').addEventListener('click', ()=>{
+    sjFi.value = '';
+    $('#sjFileChip').classList.remove('show');
+    $('#sjPreviewBox').classList.remove('show');
+    $('#sjMappingWrap').style.display = 'none';
+    $('#sjAlert').classList.remove('show');
+    $('#sjConfirmBtn').disabled = true;
+    sjDetectedMeta = {};
+  });
+
+  /* ---- Escape handler ---- */
   document.addEventListener('keydown', e=>{
     if(e.key === 'Escape'){
       if(document.querySelector('.editable-cell.editing')) return;
-      if($('#sjTmplOverlay').classList.contains('show')) closeSjTmplModal();
-      else if($('#sjOverlay').classList.contains('show')) closeSjModal();
+      if($('#sjOverlay').classList.contains('show')) closeSjModal();
       else if($('#importOverlay').classList.contains('show')) closeImportModal();
       else if($('#metaOverlay').classList.contains('show')) closeMetaModal();
       else if($('#detailOverlay').classList.contains('show')) closeDetail();
@@ -3224,7 +2428,7 @@ function init(){
 }
 
 /* =========================================================
-   FIREBASE
+   FIREBASE : AUTH + FIRESTORE
    ========================================================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCJXpd7hicPPiIMnNdTI5xPgVyBcNf5olo",
@@ -3261,14 +2465,14 @@ function emailToUsername(e){
 
 const AUTH_ERRORS = {
   'auth/invalid-email'              : 'Format username tidak valid.',
-  'auth/user-disabled'              : 'Akun ini dinonaktifkan.',
+  'auth/user-disabled'              : 'Akun ini dinonaktifkan. Hubungi admin.',
   'auth/user-not-found'             : 'Username tidak ditemukan.',
   'auth/wrong-password'             : 'Password salah.',
   'auth/invalid-credential'         : 'Username atau password salah.',
   'auth/invalid-login-credentials'  : 'Username atau password salah.',
-  'auth/too-many-requests'          : 'Terlalu banyak percobaan gagal.',
+  'auth/too-many-requests'          : 'Terlalu banyak percobaan gagal. Coba lagi beberapa saat.',
   'auth/network-request-failed'     : 'Koneksi internet bermasalah.',
-  'auth/operation-not-allowed'      : 'Metode login Email/Password belum diaktifkan.'
+  'auth/operation-not-allowed'      : 'Metode login Email/Password belum diaktifkan di Firebase Console.'
 };
 function authMsg(err){
   return AUTH_ERRORS[err && err.code] || (err && err.message) || 'Terjadi kesalahan.';
@@ -3389,7 +2593,7 @@ function startFirestoreSync(){
   }, err=>{
     console.error('Firestore error:', err);
     fsReady = false;
-    toast('⚠️ Gagal sinkron ke server');
+    toast('⚠️ Gagal sinkron ke server (' + (err.code || 'error') + ')');
   });
 }
 
