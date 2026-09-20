@@ -9,7 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<!-- ===== PDF.js + Tesseract.js (untuk Upload Surat Jalan) ===== -->
+<!-- ===== PDF.js + Tesseract.js ===== -->
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
 <style>
@@ -291,6 +291,7 @@
   .alert.info{background:#dbeafe;color:#1e40af}
   .alert.warn{background:#fef3c7;color:#92400e}
   .alert.err{background:#fee2e2;color:#991b1b}
+  .alert.success{background:#dcfce7;color:#166534}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
     background:#0f172a;color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;
     opacity:0;transition:.28s;z-index:99;pointer-events:none;max-width:90vw;text-align:center}
@@ -368,6 +369,8 @@
   .sj-type-pill.xls{background:#dcfce7;color:#166534}
   .sj-type-pill.txt{background:#dbeafe;color:#1e40af}
   .sj-type-pill.multi{background:#f3e8ff;color:#6b21a8}
+  .sj-type-pill.auto{background:#dcfce7;color:#065f46;animation:pulse 1.5s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 
   .sj-preview-tbl{width:100%;border-collapse:collapse;font-size:12px}
   .sj-preview-tbl th{background:#1e293b;color:#fff;padding:8px 12px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}
@@ -385,21 +388,40 @@
   .sj-raw-wrap .raw-head{font-weight:700;color:#334155;font-size:11px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
   .sj-raw-wrap .raw-head button{background:#e2e8f0;border:none;padding:3px 8px;border-radius:5px;font-size:10px;cursor:pointer;color:#475569}
 
-  /* ====== MULTI-SJ RESULTS ====== */
-  .sj-multi-card{border:1px solid #e2e8f0;border-radius:10px;margin-bottom:10px;overflow:hidden;background:#fff}
-  .sj-multi-head{padding:10px 14px;background:#f1f5f9;display:flex;align-items:center;gap:10px;cursor:pointer;border-bottom:1px solid #e2e8f0}
-  .sj-multi-head:hover{background:#e2e8f0}
-  .sj-multi-head .idx{width:26px;height:26px;border-radius:50%;background:#2563eb;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
-  .sj-multi-head .ttl{font-weight:700;color:#1e293b;font-size:12.5px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .sj-multi-head .badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:#dcfce7;color:#166534}
-  .sj-multi-head .badge.warn{background:#fef3c7;color:#92400e}
-  .sj-multi-body{padding:12px 14px;display:none}
-  .sj-multi-body.show{display:block}
-  .sj-multi-body .row{display:grid;grid-template-columns:180px 1fr;gap:8px;align-items:center;margin-bottom:6px;font-size:12px}
-  .sj-multi-body .row label{font-weight:700;color:#475569;font-size:11px}
-  .sj-multi-body .row input{padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;font-family:inherit;outline:none;width:100%}
-  .sj-multi-body .row input:focus{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.15)}
-  .sj-multi-body .row select{padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;outline:none;width:100%;background:#fff}
+  /* ====== AUTO-APPLY RESULT CARD ====== */
+  .sj-auto-banner{
+    padding:16px 20px;border-radius:12px;
+    background:linear-gradient(120deg,#dcfce7,#bbf7d0);
+    border:2px solid #16a34a;
+    color:#065f46;font-size:14px;font-weight:700;
+    display:flex;align-items:center;gap:12px;
+    margin-bottom:14px;animation:pop .3s ease;
+  }
+  .sj-auto-banner .big-ic{font-size:32px;flex:none}
+  .sj-auto-banner .ttl{font-size:15px;font-weight:800;color:#166534}
+  .sj-auto-banner .sub{font-size:12px;font-weight:500;color:#047857;margin-top:3px}
+
+  .sj-auto-card{border:1px solid #a7f3d0;border-radius:10px;padding:12px 14px;
+    margin-bottom:8px;background:#f0fdf4;display:flex;align-items:center;gap:12px;
+    animation:slideIn .25s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+  .sj-auto-card .ic{width:32px;height:32px;border-radius:8px;background:#16a34a;color:#fff;
+    display:grid;place-items:center;font-size:16px;flex:none}
+  .sj-auto-card .info{flex:1;min-width:0}
+  .sj-auto-card .gname{font-weight:800;color:#065f46;font-size:13px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sj-auto-card .gmeta{font-size:11px;color:#047857;margin-top:2px}
+
+  .sj-warn-card{border:1px solid #fcd34d;border-radius:10px;padding:12px 14px;
+    margin-bottom:8px;background:#fef3c7}
+  .sj-warn-card .head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .sj-warn-card .ic{width:32px;height:32px;border-radius:8px;background:#d97706;color:#fff;
+    display:grid;place-items:center;font-size:16px;flex:none}
+  .sj-warn-card .gname{font-weight:800;color:#92400e;font-size:13px;flex:1;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sj-warn-card .row{display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:center;margin-bottom:6px;font-size:12px}
+  .sj-warn-card .row label{font-weight:700;color:#78350f;font-size:11px}
+  .sj-warn-card .row input,.sj-warn-card .row select{padding:6px 10px;border:1px solid #fcd34d;border-radius:6px;font-size:12px;outline:none;width:100%;background:#fff}
 
   /* ====== TEMPLATE DETECTION ====== */
   .sj-tmpl-item{border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:10px;background:#fff}
@@ -498,7 +520,7 @@
         <span class="em-icon">📋</span>
         <span>
           <span style="display:block">Data Lengkap (per Item)</span>
-          <span class="em-sub">Semua kolom · 1 baris = 1 part number · Nomor urut direset per grup</span>
+          <span class="em-sub">Semua kolom · 1 baris = 1 part number</span>
         </span>
       </button>
       <div class="em-sep"></div>
@@ -518,12 +540,8 @@
 <div class="hint-bar">
   <span class="icon">💡</span>
   <span>
-    Kolom <b>Nomor Surat Jalan ke P3</b>, <b>Dikonfirmasi Tanggal</b>, <b>Sjl KPG - SBY</b>, <b>Tgl Kirim KPG - SBY</b>, <b>NAMA EXPEDISI</b>, <b>NO. RESI / TRACKING EXPEDISI</b>, <b>Sjl SBY</b>, <b>Tgl Kirim SBY</b>, <b>NO TRUK | DRIVER</b>, <b>Diubah Oleh</b>, <b>Diubah Pada</b>, dan <b>TCODE</b> bisa <b>langsung diklik &amp; diketik</b> di sel-nya.
-    Kolom <b>TCODE</b> otomatis terisi <b>3 huruf pertama</b> dari <b>Bukti Transaksi Kirim</b>
-    (contoh: <code>KKG/KPG/SV/26/06/003</code> → <b>KKG</b>, <code>TRU/KPG/SV/26/06/006</code> → <b>TRU</b>).
-    Tekan <b>Enter</b> untuk simpan, <b>Esc</b> untuk batal.
-    <br><span style="color:#78350f">💾 Tombol <b>Download Excel</b> punya 2 opsi: <b>Data Lengkap (per Item)</b> dan <b>Tampilan Depan (per Grup)</b>. Nomor urut di-export otomatis dibuat baru & berurutan (1, 2, 3, …) direset per grup Bukti Transaksi Kirim.</span>
-    <br><span style="color:#7c2d12">📄 <b>Upload Surat Jalan</b> mendukung PDF (dengan OCR fallback), Gambar (JPG/PNG via OCR Bahasa Indonesia), Excel, CSV, dan TXT. Bisa mendeteksi <b>multi-SJ</b> dalam 1 file secara otomatis.</span>
+    Kolom info pengiriman bisa <b>langsung diklik &amp; diketik</b> di sel-nya. Kolom <b>TCODE</b> otomatis terisi <b>3 huruf pertama</b> dari <b>Bukti Transaksi Kirim</b>.
+    <br><span style="color:#7c2d12">📄 <b>Upload Surat Jalan</b> — setelah file diupload, data akan <b>OTOMATIS terisi</b> ke grup yang cocok tanpa perlu pilih manual. Mendukung PDF (dengan OCR), Gambar (OCR), Excel, CSV, dan TXT. Bisa mendeteksi <b>multi-SJ</b> dalam 1 file.</span>
   </span>
 </div>
 
@@ -542,7 +560,7 @@
     <div class="modal-head">
       <div>
         <h2>✏ Edit Info Pengiriman (Form Lengkap)</h2>
-        <div class="sub">Alternatif input manual lewat form — untuk mengisi seluruh kolom info sekaligus</div>
+        <div class="sub">Alternatif input manual lewat form</div>
       </div>
       <button class="close-x" id="metaCloseX">✕</button>
     </div>
@@ -570,7 +588,7 @@
           <span class="key" id="detailKey">-</span>
           <span class="count-pill" id="detailCount">0 item</span>
         </div>
-        <div class="detail-hint">Tampilan spreadsheet — kolom <b>Nomor</b> di sini menampilkan nomor urut baru sesuai urutan item (1, 2, 3, …)</div>
+        <div class="detail-hint">Tampilan spreadsheet — kolom <b>Nomor</b> menampilkan nomor urut baru</div>
       </div>
       <button class="close-x" id="detailCloseX">✕</button>
     </div>
@@ -612,13 +630,13 @@
   </div>
 </div>
 
-<!-- IMPORT MODAL -->
+<!-- IMPORT EXCEL MODAL -->
 <div class="overlay" id="importOverlay">
   <div class="modal small">
     <div class="modal-head">
       <div>
         <h2>📥 Upload Data dari Excel</h2>
-        <div class="sub">Format: .xlsx, .xls, .csv — header baris pertama harus sesuai nama kolom</div>
+        <div class="sub">Format: .xlsx, .xls, .csv</div>
       </div>
       <button class="close-x" id="importCloseX">✕</button>
     </div>
@@ -629,7 +647,6 @@
         <div class="hint">Maks 1 file · .xlsx / .xls / .csv</div>
       </div>
       <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none">
-
       <div class="file-chip" id="fileChip">
         <div class="fc-icon">📄</div>
         <div>
@@ -638,15 +655,12 @@
         </div>
         <button class="fc-x" id="fcRemove" title="Hapus file">✕</button>
       </div>
-
       <div class="opt-row">
         <span style="font-size:12px;font-weight:700;color:#334155">Mode Import:</span>
         <label><input type="radio" name="importMode" value="append" checked> Tambahkan ke data existing</label>
         <label><input type="radio" name="importMode" value="replace"> Ganti semua data</label>
       </div>
-
       <div class="alert" id="importAlert"></div>
-
       <div class="preview-box" id="previewBox">
         <div class="preview-head">
           <span>🔎 Preview Data</span>
@@ -654,7 +668,6 @@
         </div>
         <div class="preview-scroll" id="previewScroll"></div>
       </div>
-
       <div id="mappingWrap" style="display:none;margin-top:14px">
         <div style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">
           Status Pemetaan Kolom
@@ -675,11 +688,12 @@
   <div class="modal wide">
     <div class="modal-head">
       <div>
-        <h2>📄 Upload Surat Jalan — Auto Detect
+        <h2>📄 Upload Surat Jalan — Auto Detect & Auto Apply
           <span id="sjTypePill" class="sj-type-pill" style="display:none">-</span>
           <span id="sjMultiPill" class="sj-type-pill multi" style="display:none">🔢 Multi-SJ</span>
+          <span id="sjAutoPill" class="sj-type-pill auto" style="display:none">⚡ Auto</span>
         </h2>
-        <div class="sub">Deteksi otomatis: Nomor SJ, Ekspedisi, No Resi, Tanggal, No Truk, Driver</div>
+        <div class="sub">Upload → Deteksi → Auto-isi ke grup yang cocok → Selesai (tanpa pilih manual)</div>
       </div>
       <button class="close-x" id="sjCloseX">✕</button>
     </div>
@@ -688,7 +702,7 @@
         <div class="icon">📄</div>
         <div class="ttl">Klik atau tarik file Surat Jalan ke sini</div>
         <div class="hint">Format: <b>.pdf</b>, <b>.jpg</b>, <b>.png</b>, <b>.xlsx</b>, <b>.xls</b>, <b>.csv</b>, <b>.txt</b><br>
-          <small>Mendukung <b>multi-SJ</b> dalam 1 file — tiap SJ akan dideteksi terpisah</small>
+          <small>Mendukung <b>multi-SJ</b> dalam 1 file — semua akan di-auto-apply</small>
         </div>
       </div>
       <input type="file" id="sjFileInput"
@@ -714,33 +728,38 @@
 
       <div class="alert" id="sjAlert"></div>
 
+      <!-- BANNER SUKSES AUTO APPLY -->
+      <div id="sjAutoBannerWrap"></div>
+
+      <!-- PREVIEW (read-only saat auto-applied) -->
       <div class="preview-box" id="sjPreviewBox">
         <div class="preview-head">
-          <span>🔍 Hasil Deteksi Otomatis (bisa diedit)</span>
+          <span id="sjPreviewTitle">🔍 Hasil Deteksi Otomatis</span>
           <span id="sjPreviewCount" style="font-weight:600;color:#64748b">0 field</span>
         </div>
         <div style="max-height:340px;overflow:auto" id="sjPreviewScroll"></div>
       </div>
 
+      <!-- MULTI-SJ RESULTS -->
       <div id="sjMultiWrap" style="display:none;margin-top:14px">
         <div style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">
-          🔢 Hasil Deteksi Multi-SJ — <span id="sjMultiCount">0</span> Surat Jalan ditemukan
+          🔢 Hasil Deteksi Multi-SJ — <span id="sjMultiCount">0</span> Surat Jalan
         </div>
         <div id="sjMultiList" style="max-height:480px;overflow:auto;padding-right:4px"></div>
       </div>
 
+      <!-- FALLBACK MANUAL (kalau tidak ada grup cocok) -->
       <div id="sjTargetWrap" style="display:none;margin-top:16px">
-        <div class="field">
-          <label>🎯 Terapkan ke Grup Bukti Transaksi Kirim</label>
-          <select id="sjTargetGroup" class="filter" style="width:100%;padding:9px 12px">
-            <option value="">-- Pilih grup Bukti Transaksi Kirim --</option>
-          </select>
-          <div class="field-hint">Pilih grup yang sesuai dengan Surat Jalan ini, lalu klik "Terapkan"</div>
+        <div class="alert warn show" style="margin-bottom:10px">
+          ⚠️ Tidak ada grup yang cocok otomatis. Silakan pilih grup target manual di bawah, atau biarkan sistem membuat grup baru.
         </div>
-      </div>
-
-      <div id="sjMultiApplyWrap" style="display:none;margin-top:16px;padding:12px 14px;background:#f3e8ff;border:1px solid #ddd6fe;border-radius:10px;font-size:12px;color:#6b21a8">
-        <b>💡 Mode Multi-SJ:</b> Setiap SJ di bawah akan dicocokkan otomatis ke grup Bukti Transaksi Kirim berdasarkan <b>Nomor Surat Jalan</b> atau <b>Nomor Resi</b>. Anda bisa override manual di tiap kartu.
+        <div class="field">
+          <label>🎯 Pilih Grup Bukti Transaksi Kirim</label>
+          <select id="sjTargetGroup" class="filter" style="width:100%;padding:9px 12px">
+            <option value="">-- Pilih grup --</option>
+          </select>
+          <div class="field-hint">Atau biarkan kosong → sistem akan buat grup baru dengan nama dari No SJ</div>
+        </div>
       </div>
 
       <div class="sj-raw-wrap" id="sjRawWrap">
@@ -752,10 +771,10 @@
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn ghost" id="sjResetBtn" style="display:none">🔄 Reset Deteksi</button>
+      <button class="btn ghost" id="sjResetBtn" style="display:none">🔄 Reset</button>
       <div class="spacer"></div>
       <button class="btn ghost" id="sjCancelBtn">Tutup</button>
-      <button class="btn primary" id="sjApplyBtn" disabled>✓ Terapkan ke Info Pengiriman</button>
+      <button class="btn primary" id="sjApplyBtn" disabled>✓ Terapkan</button>
     </div>
   </div>
 </div>
@@ -944,7 +963,7 @@ function toast(msg){
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._tm);
-  t._tm = setTimeout(()=>t.classList.remove('show'), 2200);
+  t._tm = setTimeout(()=>t.classList.remove('show'), 2400);
 }
 
 /* =========================================================
@@ -1256,7 +1275,7 @@ function buildMetaForm(){
     let input;
     let hint = '';
     if(f.key === 'tcode'){
-      hint = `<div class="field-hint">⚡ Otomatis terisi 3 huruf pertama dari Bukti Transaksi Kirim (bisa diubah manual)</div>`;
+      hint = `<div class="field-hint">⚡ Otomatis terisi 3 huruf pertama dari Bukti Transaksi Kirim</div>`;
     }
     if(f.type === 'select'){
       input = `<select name="${f.key}"><option value="">-- Pilih --</option>
@@ -1393,7 +1412,7 @@ function renderDetail(){
       renderTable();
       if(data.filter(d=>groupKey(d)===currentDetailKey).length === 0){
         closeDetail();
-        toast('🗑 Item dihapus — grup kosong, kembali ke daftar');
+        toast('🗑 Item dihapus — grup kosong');
       }else{
         renderDetail();
         toast('🗑 Item dihapus');
@@ -1587,12 +1606,7 @@ function exportExcel(){
     ['Total Grup Bukti Transaksi', new Set(filtered.map(groupKey)).size],
     ['Filter Site', $('#siteFilter').value || 'Semua'],
     ['Filter Status', $('#statusFilter').value || 'Semua'],
-    ['Kata Kunci', $('#searchInput').value.trim() || '-'],
-    [''],
-    ['Catatan', 'Nomor urut di-reset per grup Bukti Transaksi Kirim (1, 2, 3, …)'],
-    ['Catatan', 'Baris diurutkan per Bukti Transaksi Kirim lalu nomor lama'],
-    ['Catatan', 'Kolom info pengiriman berada di paling kanan (setelah Analisis SA)'],
-    ['Catatan', 'TCODE otomatis = 3 huruf pertama dari Bukti Transaksi Kirim']
+    ['Kata Kunci', $('#searchInput').value.trim() || '-']
   ];
   const wsInfo = XLSX.utils.aoa_to_sheet(info);
   wsInfo['!cols'] = [{wch:26},{wch:56}];
@@ -1654,19 +1668,12 @@ function exportFrontViewExcel(){
 
   const info = [
     ['Laporan', 'Kontrol Pengiriman Sparepart — Tampilan Depan'],
-    ['Mode Export', 'Tampilan Depan (per Grup / Bukti Transaksi Kirim)'],
+    ['Mode Export', 'Tampilan Depan (per Grup)'],
     ['Tanggal Export', new Date().toLocaleString('id-ID')],
     ['Diekspor Oleh', currentUser ? emailToUsername(currentUser.email) : '-'],
     ['Total Grup Bukti Transaksi', rows.length],
     ['Total Item', totalItems],
-    ['Total Qty', grandQty],
-    ['Filter Site', $('#siteFilter').value || 'Semua'],
-    ['Filter Status', $('#statusFilter').value || 'Semua'],
-    ['Kata Kunci', $('#searchInput').value.trim() || '-'],
-    [''],
-    ['Catatan', 'Satu baris = satu Bukti Transaksi Kirim (grup)'],
-    ['Catatan', 'Kolom info pengiriman mengikuti nilai yang tampil di tabel utama'],
-    ['Catatan', 'TCODE otomatis = 3 huruf pertama dari Bukti Transaksi Kirim']
+    ['Total Qty', grandQty]
   ];
   const wsInfo = XLSX.utils.aoa_to_sheet(info);
   wsInfo['!cols'] = [{wch:28},{wch:56}];
@@ -1695,9 +1702,6 @@ function exportGroupExcel(){
 
   const ws = XLSX.utils.json_to_sheet(rows, { header: headers });
   ws['!cols'] = autoWidths(rows, headers);
-  ws['!autofilter'] = { ref: XLSX.utils.encode_range({
-    s:{r:0,c:0}, e:{r:rows.length, c:headers.length-1}
-  })};
 
   const wb = XLSX.utils.book_new();
   let sheetName = String(currentDetailKey).replace(/[\\\/\?\*\[\]:]/g,'-').slice(0,31);
@@ -1740,31 +1744,8 @@ function downloadTemplateExcel(){
   const ws = XLSX.utils.json_to_sheet([example], { header: headers });
   ws['!cols'] = autoWidths([example], headers);
 
-  const guide = [
-    ['PETUNJUK PENGGUNAAN TEMPLATE'],
-    [''],
-    ['1. Isi data mulai dari baris ke-2 (baris ke-1 adalah header).'],
-    ['2. Jangan mengubah nama kolom pada baris pertama.'],
-    ['3. Kolom "Bukti Transaksi Kirim" berfungsi sebagai kunci pengelompokan.'],
-    ['4. Kolom INFO PENGIRIMAN ada di PALING KANAN (setelah Analisis SA):'],
-    ['   Nomor Surat Jalan ke P3 s/d TCODE — berlaku PER GRUP Bukti Transaksi Kirim.'],
-    ['   Cukup isi di salah satu baris, sistem memakai nilai pertama non-kosong.'],
-    ['5. Kolom TCODE otomatis terisi = 3 huruf pertama dari segmen pertama'],
-    ['   "Bukti Transaksi Kirim".'],
-    ['   Contoh: "KKG/KPG/SV/26/06/003" → "KKG", "TRU/KPG/SV/26/06/006" → "TRU".'],
-    ['   Kolom TCODE pada file boleh dikosongkan (akan diisi otomatis).'],
-    ['6. Format tanggal: YYYY-MM-DD. Untuk "Diubah Pada": YYYY-MM-DD HH:MM.'],
-    [''],['Catatan Export: Saat download dari aplikasi, kolom "Nomor" akan'],
-    ['dibuat ulang berurutan (1, 2, 3, …) direset per grup Bukti Transaksi.'],
-    [''],['Daftar Kolom (urutan di file Excel):'],
-    ...headers.map((h,i)=>[`${i+1}. ${h}`])
-  ];
-  const wsGuide = XLSX.utils.aoa_to_sheet(guide);
-  wsGuide['!cols'] = [{wch:60}];
-
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Template');
-  XLSX.utils.book_append_sheet(wb, wsGuide, 'Petunjuk');
 
   XLSX.writeFile(wb, 'template-upload-sparepart.xlsx');
   toast('📄 Template Excel berhasil diunduh');
@@ -1780,45 +1761,40 @@ function norm(str){
 const HEADER_ALIASES = {
   nomor:               ['nomor','no','nomer','nomorurut','no.','no'],
   site:                ['site','sitelokasi','lokasisite','lokasi'],
-  buktiTransaksiKirim: ['buktitransaksikirim','buktikirim','buktitransaksi','transactionproof','nobuktikirim','nobukti'],
-  tanggalReservasi:    ['tanggalreservasi','tglreservasi','tglresv','reservationdate'],
-  buktiServiceCall:    ['buktiservicecall','servicecall','sc','bukti_sc'],
-  buktiServiceJob:     ['buktiservicejob','servicejob','sj','bukti_sj'],
-  statusServiceCall:   ['statusservicecall','statussc','status','statuscall'],
-  partNumber:          ['partnumber','partno','partnum','pn','part_number','kodebarang','kode_part'],
-  deskripsiPartNumber: ['deskripsipartnumber','deskripsi','description','namapart','namabarang','deskripsipart'],
-  qty:                 ['qty','quantity','jumlah','kuantitas','jml'],
-  nomorSeriMaterial:   ['nomorserimaterial','nomorseri','serialnumber','serialno','sn','nomor_seri','noseri'],
-  kembaliKePabrik:     ['kembalikepabrik','kembalipabrik','returpabrik','retur','returnpabrik'],
-  klaimKeHIT:          ['klaimkeh','klaimkehit','klaim','claimhit','claim'],
-  lokasiReservasi:     ['lokasireservasi','lokreservasi','lokresv','reservasilokasi'],
-  lokasiStok:          ['lokasistok','lokstok','lokasigudang','gudang','rak'],
-  lokasiTujuan:        ['lokasitujuan','loktujuan','tujuan','destination','lokasikirim'],
-  buktiReservasi:      ['buktireservasi','bukti_reservasi','reservationproof','reservasibukti'],
-  nomorPO:             ['nomorpo','nopo','no_po','po','purchaseorder'],
-  invoiceKeHIT:        ['invoicekeh','invoicekehit','invoice','invoicehit'],
-  buktiTerima:         ['bukti terima','bukti_terima','buktiterima','terima','penerimaan','bast','ba'],
-  analisisSA:          ['analisissa','analisis','analisysa','catatan','keterangan','note']
+  buktiTransaksiKirim: ['buktitransaksikirim','buktikirim','buktitransaksi','nobuktikirim','nobukti'],
+  tanggalReservasi:    ['tanggalreservasi','tglreservasi','tglresv'],
+  buktiServiceCall:    ['buktiservicecall','servicecall','sc'],
+  buktiServiceJob:     ['buktiservicejob','servicejob','sj'],
+  statusServiceCall:   ['statusservicecall','statussc','status'],
+  partNumber:          ['partnumber','partno','partnum','pn','kodebarang'],
+  deskripsiPartNumber: ['deskripsipartnumber','deskripsi','description','namapart'],
+  qty:                 ['qty','quantity','jumlah','jml'],
+  nomorSeriMaterial:   ['nomorserimaterial','nomorseri','serialnumber','sn'],
+  kembaliKePabrik:     ['kembalikepabrik','kembalipabrik','returpabrik','retur'],
+  klaimKeHIT:          ['klaimkeh','klaimkehit','klaim'],
+  lokasiReservasi:     ['lokasireservasi','lokreservasi'],
+  lokasiStok:          ['lokasistok','lokstok','gudang','rak'],
+  lokasiTujuan:        ['lokasitujuan','loktujuan','tujuan'],
+  buktiReservasi:      ['buktireservasi','reservationproof'],
+  nomorPO:             ['nomorpo','nopo','po'],
+  invoiceKeHIT:        ['invoicekeh','invoicekehit','invoice'],
+  buktiTerima:         ['buktiterima','terima','bast','ba'],
+  analisisSA:          ['analisissa','analisis','catatan','note']
 };
 
 const META_ALIASES = {
-  nomorSuratJalanP3:   ['nomorsuratjalanp3','nomorsuratjalan kep3','nomorsuratjalan',
-                        'nosuratjalanp3','nosj','nosuratjalan','suratjalan','nomorsj'],
-  dikonfirmasiTanggal: ['dikonfirmasitanggal','tglkonfirmasi','tanggaldikonfirmasi'],
-  sjlKpgSby:           ['sjlkpgsby','sjlkpg-sby','suratjalankpgsby','sjlkpgsby',
-                        'sjl_kpg_sby','suratjalan_kpg_sby'],
-  tglKirimKpgSby:      ['tglkirimkpgsby','tglkirimkpg-sby','tanggal kirim kpg sby','tgl_kirim_kpg_sby'],
+  nomorSuratJalanP3:   ['nomorsuratjalanp3','nosuratjalanp3','nosj','suratjalan'],
+  dikonfirmasiTanggal: ['dikonfirmasitanggal','tglkonfirmasi'],
+  sjlKpgSby:           ['sjlkpgsby','suratjalankpgsby'],
+  tglKirimKpgSby:      ['tglkirimkpgsby','tanggal kirim kpg sby'],
   namaExpedisi:        ['namaexpedisi','expedisi','ekspedisi','kurir'],
-  noResiExpedisi:      ['no resi / tracking expedisi','no resi expedisi','noresiexpedisi',
-                        'noresi','nomeresi','no_resi','resi','notracking','nomeresi',
-                        'no tracking expedisi','noresi/trackingexpedisi'],
-  sjlSby:              ['sjlsby','sjl_sby','suratjalansby','suratjalan_sby'],
-  tglKirimSby:         ['tglkirimsby','tgl_kirim_sby','tanggal kirim sby'],
-  noTrukDriver:        ['no truk | driver','notrukdriver','notruk|driver','notruk','nodriver',
-                        'nopol','nopol|driver','notruk_driver'],
-  diubahOleh:          ['diubaholeh','diubah_oleh','editor','modifiedby'],
-  diubahPada:          ['diubahpada','diubah_pada','modifiedat','tanggalubah'],
-  tcode:               ['tcode','t_code','kodetransaksi']
+  noResiExpedisi:      ['no resi / tracking expedisi','noresiexpedisi','noresi','resi'],
+  sjlSby:              ['sjlsby','suratjalansby'],
+  tglKirimSby:         ['tglkirimsby','tanggal kirim sby'],
+  noTrukDriver:        ['no truk | driver','notrukdriver','notruk','nopol'],
+  diubahOleh:          ['diubaholeh','editor'],
+  diubahPada:          ['diubahpada','tanggalubah'],
+  tcode:               ['tcode','kodetransaksi']
 };
 
 function mapHeaders(headers){
@@ -1878,7 +1854,7 @@ function handleFile(file){
   if(!file){ return; }
   const ext = file.name.split('.').pop().toLowerCase();
   if(!['xlsx','xls','csv'].includes(ext)){
-    showAlert('Format file tidak didukung. Gunakan .xlsx, .xls, atau .csv', 'err');
+    showAlert('Format file tidak didukung.', 'err');
     return;
   }
   $('#fcName').textContent = file.name;
@@ -1892,7 +1868,7 @@ function handleFile(file){
       const ws = wb.Sheets[wb.SheetNames[0]];
       const json = XLSX.utils.sheet_to_json(ws, {defval:'', raw:false});
       if(!json.length){
-        showAlert('File kosong atau tidak ada baris data.', 'err');
+        showAlert('File kosong.', 'err');
         $('#fcMeta').textContent = '0 baris';
         $('#importConfirmBtn').disabled = true;
         return;
@@ -1944,7 +1920,7 @@ function handleFile(file){
         }
       });
 
-      $('#fcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · ' + importRows.length + ' baris siap diimport';
+      $('#fcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · ' + importRows.length + ' baris';
       renderImportPreview(headers);
       renderMappingStatus(metaMap);
 
@@ -1953,13 +1929,13 @@ function handleFile(file){
       const hasPart = importMapping.partNumber !== undefined;
 
       if(!hasBTK){
-        showAlert('Kolom "Bukti Transaksi Kirim" tidak ditemukan. Semua baris masuk ke grup "(Tanpa Bukti Transaksi Kirim)".', 'warn');
+        showAlert('Kolom "Bukti Transaksi Kirim" tidak ditemukan.', 'warn');
         $('#importConfirmBtn').disabled = false;
       }else if(!hasSite && !hasPart){
-        showAlert('Kolom "Site" dan "Part Number" tidak ditemukan. Periksa nama kolom pada file Excel.', 'err');
+        showAlert('Kolom "Site" dan "Part Number" tidak ditemukan.', 'err');
         $('#importConfirmBtn').disabled = true;
       }else{
-        showAlert('✓ File berhasil dibaca. Periksa preview lalu klik "Import Sekarang".', 'info');
+        showAlert('✓ File berhasil dibaca.', 'info');
         $('#importConfirmBtn').disabled = false;
       }
     }catch(err){
@@ -2042,11 +2018,11 @@ function confirmImport(){
   });
 
   if(mode === 'replace'){
-    if(!confirm(`Ganti SEMUA data existing (${data.length} baris) dengan ${newRecords.length} baris dari file?`)) return;
+    if(!confirm(`Ganti SEMUA data existing?`)) return;
     data = newRecords;
     groupMeta = { ...importMetaMap };
     saveMeta();
-    toast(`✓ Import selesai — ${newRecords.length} baris (mode: ganti semua)`);
+    toast(`✓ Import selesai — ${newRecords.length} baris`);
   }else{
     data = data.concat(newRecords);
     Object.keys(importMetaMap).forEach(k=>{
@@ -2061,7 +2037,7 @@ function confirmImport(){
 }
 
 /* =========================================================
-   UPLOAD SURAT JALAN — MULTI-SJ + CUSTOM TEMPLATE
+   UPLOAD SURAT JALAN — AUTO APPLY + FUZZY + AUTO-CREATE
    ========================================================= */
 if(window.pdfjsLib){
   pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -2156,6 +2132,39 @@ function safeRegex(pattern){
   catch(e){ return null; }
 }
 
+/* ---------- Levenshtein Distance untuk Fuzzy Match ---------- */
+function levenshtein(a, b){
+  a = String(a || '').toUpperCase();
+  b = String(b || '').toUpperCase();
+  if(a === b) return 0;
+  if(!a.length) return b.length;
+  if(!b.length) return a.length;
+
+  const matrix = [];
+  for(let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for(let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+  for(let i = 1; i <= b.length; i++){
+    for(let j = 1; j <= a.length; j++){
+      if(b.charAt(i-1) === a.charAt(j-1)){
+        matrix[i][j] = matrix[i-1][j-1];
+      }else{
+        matrix[i][j] = Math.min(
+          matrix[i-1][j-1] + 1,
+          matrix[i][j-1] + 1,
+          matrix[i-1][j] + 1
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
+}
+function similarity(a, b){
+  const s = Math.max(String(a||'').length, String(b||'').length);
+  if(s === 0) return 1;
+  return 1 - (levenshtein(a, b) / s);
+}
+
 function openSjModal(){
   sjDetected = {};
   sjMultiResults = [];
@@ -2169,26 +2178,28 @@ function openSjModal(){
   $('#sjPreviewBox').classList.remove('show');
   $('#sjMultiWrap').style.display = 'none';
   $('#sjTargetWrap').style.display = 'none';
-  $('#sjMultiApplyWrap').style.display = 'none';
   $('#sjAlert').classList.remove('show');
   $('#sjProgress').classList.remove('show');
   $('#sjRawWrap').classList.remove('show');
   $('#sjTypePill').style.display = 'none';
   $('#sjMultiPill').style.display = 'none';
+  $('#sjAutoPill').style.display = 'none';
+  $('#sjAutoBannerWrap').innerHTML = '';
   $('#sjApplyBtn').disabled = true;
   $('#sjResetBtn').style.display = 'none';
-  $('#sjApplyBtn').textContent = '✓ Terapkan ke Info Pengiriman';
+  $('#sjApplyBtn').textContent = '✓ Terapkan';
+  $('#sjPreviewTitle').textContent = '🔍 Hasil Deteksi Otomatis';
 
   const sel = $('#sjTargetGroup');
   const groups = [...getGroups().keys()].sort();
-  sel.innerHTML = '<option value="">-- Pilih grup Bukti Transaksi Kirim --</option>' +
+  sel.innerHTML = '<option value="">-- Buat grup baru dari No SJ --</option>' +
     groups.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
 
   $('#sjOverlay').classList.add('show');
 }
 function closeSjModal(){
   if(sjProcessing){
-    if(!confirm('Proses ekstraksi sedang berjalan. Yakin mau tutup?')) return;
+    if(!confirm('Proses sedang berjalan. Yakin mau tutup?')) return;
   }
   $('#sjOverlay').classList.remove('show');
 }
@@ -2260,33 +2271,76 @@ async function handleSjFile(file){
     sjIsMulti = sjMultiResults.length > 1;
 
     if(sjIsMulti){
-      $('#sjMultiPill').style.display = 'inline-block';
-      $('#sjMultiCount').textContent = sjMultiResults.length;
-      renderMultiSj();
-      $('#sjMultiWrap').style.display = 'block';
-      $('#sjPreviewBox').classList.remove('show');
-      $('#sjTargetWrap').style.display = 'none';
-      $('#sjMultiApplyWrap').style.display = 'block';
-      $('#sjApplyBtn').disabled = false;
-      $('#sjApplyBtn').textContent = `✓ Terapkan ${sjMultiResults.length} SJ`;
-      showSjAlert(`🔢 Terdeteksi ${sjMultiResults.length} Surat Jalan dalam file. Periksa tiap kartu di bawah.`, 'info');
-      $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · ' + sjMultiResults.length + ' SJ terdeteksi';
+      // ====== MODE MULTI-SJ: AUTO APPLY SEMUA ======
+      applyMultiSjAuto();
     }else{
+      // ====== MODE SINGLE: AUTO MATCH + AUTO CREATE + AUTO APPLY ======
       runDetection(sjRawText, sjDetected);
-      renderSjPreview();
+
       const count = Object.keys(sjDetected).length;
       if(count === 0){
-        showSjAlert('⚠️ Tidak ada data yang berhasil dideteksi. Coba edit manual di preview.', 'warn');
+        showSjAlert('⚠️ Tidak ada data yang berhasil dideteksi dari file ini.', 'warn');
         $('#sjApplyBtn').disabled = true;
-        $('#sjTargetWrap').style.display = 'none';
+        $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · 0 field';
       }else{
-        showSjAlert(`✓ ${count} field berhasil dideteksi. Periksa & edit jika perlu, lalu pilih grup target.`, 'info');
-        $('#sjTargetWrap').style.display = 'block';
-        $('#sjApplyBtn').disabled = false;
-        $('#sjApplyBtn').textContent = '✓ Terapkan ke Info Pengiriman';
+        // Coba auto-match ke grup yang cocok (exact → fuzzy → resi)
+        const matchResult = autoMatchGroupAdvanced(sjDetected);
+
+        let targetGroup = '';
+        let createNew = false;
+
+        if(matchResult.group){
+          // ✅ Cocok → auto apply
+          targetGroup = matchResult.group;
+        }else{
+          // ❌ Tidak cocok → auto-create grup baru dari No SJ
+          targetGroup = guessNewGroupName(sjDetected);
+          if(targetGroup){
+            createNew = true;
+          }
+        }
+
+        if(targetGroup){
+          // AUTO APPLY
+          const meta = getMeta(targetGroup);
+          const filled = Object.keys(sjDetected).filter(k => String(sjDetected[k] || '').trim() !== '');
+          filled.forEach(k => { meta[k] = String(sjDetected[k]).trim(); });
+          stampMeta(meta);
+          if(!meta.tcode){
+            const tc = deriveTcode(targetGroup);
+            if(tc) meta.tcode = tc;
+          }
+          setMeta(targetGroup, meta);
+          renderTable();
+
+          // Tampilkan banner sukses
+          renderSjAutoBanner(targetGroup, filled.length, createNew, matchResult.matchType);
+          renderSjPreviewReadOnly(targetGroup, filled.length);
+          showSjAlert(`✅ Berhasil! ${filled.length} field otomatis terisi ke grup "${targetGroup}"`, 'success');
+          $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · ✅ AUTO-APPLIED';
+          $('#sjTargetWrap').style.display = 'none';
+          $('#sjApplyBtn').disabled = true;
+          $('#sjApplyBtn').textContent = '✅ Sudah Diterapkan';
+          $('#sjAutoPill').style.display = 'inline-block';
+
+          toast(`✅ ${filled.length} field otomatis terisi ke "${targetGroup}"`);
+
+          // Auto-close modal setelah 3 detik
+          setTimeout(() => {
+            if($('#sjOverlay').classList.contains('show') && !sjProcessing){
+              closeSjModal();
+            }
+          }, 3000);
+        }else{
+          // Fallback: tidak bisa auto-create → pilih manual
+          showSjAlert(`⚠️ Tidak bisa menentukan grup target otomatis. Silakan pilih manual di bawah.`, 'warn');
+          renderSjPreview();
+          $('#sjTargetWrap').style.display = 'block';
+          $('#sjApplyBtn').disabled = false;
+          $('#sjApplyBtn').textContent = '✓ Terapkan Manual';
+          $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · perlu pilih grup';
+        }
       }
-      $('#sjFcMeta').textContent = (file.size/1024).toFixed(1) + ' KB · ' +
-        Object.keys(sjDetected).length + ' field terdeteksi';
     }
 
     showRawText();
@@ -2299,6 +2353,113 @@ async function handleSjFile(file){
   }
 }
 
+/* ---------- AUTO-MATCH ADVANCED (exact → substring → fuzzy → resi) ---------- */
+function autoMatchGroupAdvanced(det){
+  const groups = [...getGroups().keys()];
+  const sjNo = String(det.nomorSuratJalanP3 || '').trim().toUpperCase();
+  const resi = String(det.noResiExpedisi || '').trim().toUpperCase();
+
+  // 1) Exact match ke buktiTransaksiKirim
+  if(sjNo){
+    const hit = groups.find(g => g.toUpperCase() === sjNo);
+    if(hit) return { group: hit, matchType: 'exact-btk' };
+  }
+
+  // 2) Exact match ke nomorSuratJalanP3 di meta
+  if(sjNo){
+    for(const g of groups){
+      const meta = getMeta(g);
+      const mSJ = String(meta.nomorSuratJalanP3 || '').trim().toUpperCase();
+      if(mSJ && mSJ === sjNo){
+        return { group: g, matchType: 'exact-sj' };
+      }
+    }
+  }
+
+  // 3) Substring match
+  if(sjNo){
+    const hit = groups.find(g => 
+      g.toUpperCase().includes(sjNo) || sjNo.includes(g.toUpperCase())
+    );
+    if(hit) return { group: hit, matchType: 'substring' };
+  }
+
+  // 4) Resi match
+  if(resi){
+    for(const g of groups){
+      const meta = getMeta(g);
+      const mResi = String(meta.noResiExpedisi || '').trim().toUpperCase();
+      if(mResi && (mResi === resi || mResi.includes(resi) || resi.includes(mResi))){
+        return { group: g, matchType: 'resi' };
+      }
+    }
+  }
+
+  // 5) Fuzzy match (similarity ≥ 0.75)
+  if(sjNo && sjNo.length >= 6){
+    let best = null;
+    let bestScore = 0;
+    for(const g of groups){
+      const score = similarity(sjNo, g);
+      if(score > bestScore && score >= 0.75){
+        best = g;
+        bestScore = score;
+      }
+      // Cek juga terhadap nomorSuratJalanP3 di meta
+      const meta = getMeta(g);
+      const mSJ = String(meta.nomorSuratJalanP3 || '').trim().toUpperCase();
+      if(mSJ){
+        const s2 = similarity(sjNo, mSJ);
+        if(s2 > bestScore && s2 >= 0.75){
+          best = g;
+          bestScore = s2;
+        }
+      }
+    }
+    if(best) return { group: best, matchType: 'fuzzy', score: bestScore };
+  }
+
+  return { group: '', matchType: 'none' };
+}
+
+/* ---------- GUESS NEW GROUP NAME dari No SJ ---------- */
+function guessNewGroupName(det){
+  const sj = String(det.nomorSuratJalanP3 || '').trim();
+  if(!sj) return '';
+  // Bersihkan karakter aneh
+  return sj.replace(/[^A-Za-z0-9\/\-\.]/g, '').slice(0, 60);
+}
+
+/* ---------- RENDER BANNER AUTO-APPLY ---------- */
+function renderSjAutoBanner(targetGroup, fieldCount, isNew, matchType){
+  const matchLabels = {
+    'exact-btk': '🎯 Exact match Bukti Transaksi',
+    'exact-sj': '🎯 Exact match Nomor Surat Jalan',
+    'substring': '🔍 Substring match',
+    'resi': '📦 Match via Nomor Resi',
+    'fuzzy': '🧠 Fuzzy match (kemiripan tinggi)',
+    'none': '🆕 Grup Baru Dibuat'
+  };
+
+  const banner = `
+    <div class="sj-auto-banner">
+      <div class="big-ic">✅</div>
+      <div style="flex:1;min-width:0">
+        <div class="ttl">Otomatis Terisi!</div>
+        <div class="sub">
+          <b>${fieldCount} field</b> berhasil diterapkan ke grup: <b>${esc(targetGroup)}</b>
+          ${isNew ? ' <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:12px;font-size:10.5px;margin-left:6px">🆕 Grup Baru</span>' : ''}
+        </div>
+        <div class="sub" style="margin-top:4px;font-size:11px">
+          ${esc(matchLabels[matchType] || '-')}
+        </div>
+      </div>
+    </div>
+  `;
+  $('#sjAutoBannerWrap').innerHTML = banner;
+}
+
+/* ---------- EXTRACTORS ---------- */
 function extractFromText(file){
   return new Promise((resolve, reject) => {
     setSjProgress(true, 'Membaca file teks…', 30, 'Mohon tunggu');
@@ -2416,6 +2577,7 @@ async function extractFromImage(file){
   sjRawText = text || '';
 }
 
+/* ---------- DETECTION ENGINE ---------- */
 function runDetection(text, target){
   const out = target || {};
   if(!text) return out;
@@ -2470,6 +2632,7 @@ function runDetection(text, target){
   return out;
 }
 
+/* ---------- MULTI-SJ DETECTION ---------- */
 function detectMultiSj(text){
   if(!text) return [];
   const clean = text.replace(/\r/g,'').trim();
@@ -2499,9 +2662,20 @@ function detectMultiSj(text){
     const det = runDetection(block, {});
     if(!det.nomorSuratJalanP3) det.nomorSuratJalanP3 = anchors[i].value;
     if(!det.tcode) det.tcode = deriveTcode(det.nomorSuratJalanP3);
+
+    const matchResult = autoMatchGroupAdvanced(det);
+    let targetGroup = matchResult.group;
+    let isNew = false;
+    if(!targetGroup){
+      targetGroup = guessNewGroupName(det);
+      if(targetGroup) isNew = true;
+    }
+
     blocks.push({
       fields: det,
-      matchedGroup: autoMatchGroup(det),
+      matchedGroup: targetGroup || '',
+      matchType: matchResult.matchType,
+      isNew: isNew,
       rawBlock: block.slice(0, 500)
     });
   }
@@ -2509,33 +2683,161 @@ function detectMultiSj(text){
   return blocks;
 }
 
-function autoMatchGroup(det){
-  const groups = [...getGroups().keys()];
-  const sjNo = (det.nomorSuratJalanP3 || '').toUpperCase();
-  const resi = (det.noResiExpedisi || '').toUpperCase();
+/* ---------- AUTO APPLY MULTI-SJ ---------- */
+function applyMultiSjAuto(){
+  const applied = [];
+  const failed = [];
 
-  if(sjNo){
-    const hit = groups.find(g => g.toUpperCase() === sjNo);
-    if(hit) return hit;
-  }
-  if(sjNo){
-    const hit = groups.find(g => g.toUpperCase().includes(sjNo) || sjNo.includes(g.toUpperCase()));
-    if(hit) return hit;
-  }
-  if(resi){
-    for(const g of groups){
-      const meta = getMeta(g);
-      const mResi = String(meta.noResiExpedisi || '').toUpperCase();
-      if(mResi && (mResi === resi || mResi.includes(resi) || resi.includes(mResi))){
-        return g;
-      }
+  sjMultiResults.forEach(r => {
+    const targetKey = r.matchedGroup;
+    if(!targetKey){
+      failed.push(r);
+      return;
     }
+
+    const meta = getMeta(targetKey);
+    const filled = Object.keys(r.fields).filter(k => String(r.fields[k] || '').trim() !== '');
+    filled.forEach(k => { meta[k] = String(r.fields[k]).trim(); });
+    stampMeta(meta);
+    if(!meta.tcode){
+      const tc = deriveTcode(targetKey);
+      if(tc) meta.tcode = tc;
+    }
+    setMeta(targetKey, meta);
+
+    applied.push({
+      group: targetKey,
+      count: filled.length,
+      isNew: r.isNew,
+      matchType: r.matchType,
+      sjNo: r.fields.nomorSuratJalanP3 || ''
+    });
+  });
+
+  renderTable();
+
+  $('#sjMultiPill').style.display = 'inline-block';
+  $('#sjAutoPill').style.display = applied.length > 0 ? 'inline-block' : 'none';
+  $('#sjMultiCount').textContent = sjMultiResults.length;
+  $('#sjMultiWrap').style.display = 'block';
+  $('#sjPreviewBox').classList.remove('show');
+  $('#sjTargetWrap').style.display = 'none';
+  $('#sjApplyBtn').disabled = true;
+  $('#sjApplyBtn').textContent = applied.length > 0 ? '✅ Sudah Diterapkan' : '✓ Terapkan';
+  $('#sjFcMeta').textContent = '✅ ' + applied.length + ' SJ auto-applied' +
+    (failed.length ? ' · ⚠ ' + failed.length + ' gagal' : '');
+
+  renderMultiSjAutoResult(applied, failed);
+
+  if(failed.length === 0){
+    showSjAlert(`✅ Berhasil! ${applied.length} Surat Jalan otomatis terisi ke grup masing-masing.`, 'success');
+    toast(`✅ ${applied.length} SJ otomatis terisi`);
+
+    setTimeout(() => {
+      if($('#sjOverlay').classList.contains('show') && !sjProcessing){
+        closeSjModal();
+      }
+    }, 3500);
+  }else{
+    showSjAlert(`✅ ${applied.length} SJ otomatis terisi · ⚠ ${failed.length} SJ gagal (No SJ tidak valid).`, 'warn');
   }
-  return '';
 }
 
+/* ---------- RENDER MULTI-SJ AUTO RESULT ---------- */
+function renderMultiSjAutoResult(applied, failed){
+  const wrap = $('#sjMultiList');
+
+  let html = '';
+
+  if(applied.length > 0){
+    html += `<div class="sj-auto-banner">
+      <div class="big-ic">✅</div>
+      <div style="flex:1;min-width:0">
+        <div class="ttl">${applied.length} Surat Jalan Berhasil Diterapkan!</div>
+        <div class="sub">Semua data otomatis terisi ke grup masing-masing</div>
+      </div>
+    </div>`;
+
+    html += applied.map(r => {
+      const matchLabels = {
+        'exact-btk': '🎯 Exact BTK',
+        'exact-sj': '🎯 Exact SJ',
+        'substring': '🔍 Substring',
+        'resi': '📦 Resi',
+        'fuzzy': '🧠 Fuzzy',
+        'none': '🆕 Grup Baru'
+      };
+      return `
+        <div class="sj-auto-card">
+          <div class="ic">✓</div>
+          <div class="info">
+            <div class="gname">${esc(r.group)}</div>
+            <div class="gmeta">
+              ${r.count} field terisi
+              ${r.isNew ? ' · 🆕 Grup Baru' : ''}
+              · ${esc(matchLabels[r.matchType] || 'Auto')}
+              ${r.sjNo ? ' · No SJ: ' + esc(r.sjNo) : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  if(failed.length > 0){
+    html += `<div style="font-size:11.5px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.4px;margin-top:16px;margin-bottom:8px">
+      ⚠ ${failed.length} SJ Gagal Diproses
+    </div>`;
+
+    html += failed.map((r, idx) => `
+      <div class="sj-warn-card">
+        <div class="head">
+          <div class="ic">⚠</div>
+          <div class="gname">${esc(r.fields.nomorSuratJalanP3 || '(tanpa No SJ)')}</div>
+        </div>
+        <div style="font-size:11.5px;color:#78350f">
+          Nomor Surat Jalan tidak ditemukan di file. Periksa kembali isi file atau isi manual.
+        </div>
+      </div>
+    `).join('');
+  }
+
+  wrap.innerHTML = html;
+}
+
+/* ---------- RENDER PREVIEW READ-ONLY ---------- */
+function renderSjPreviewReadOnly(matchedGroup, fieldCount){
+  const keys = Object.keys(sjDetected).filter(k => String(sjDetected[k] || '').trim() !== '');
+  $('#sjPreviewTitle').textContent = '✅ Hasil Auto-Apply (Read-Only)';
+  $('#sjPreviewCount').textContent = fieldCount + ' field';
+
+  let html = `
+    <div style="padding:12px 14px;background:#dcfce7;border-bottom:1px solid #a7f3d0;font-size:12.5px;color:#065f46;font-weight:700;display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px">✅</span>
+      <span>Berhasil diterapkan ke grup: <b>${esc(matchedGroup)}</b></span>
+    </div>
+    <table class="sj-preview-tbl"><thead><tr>
+      <th>Field</th><th>Nilai Terisi</th>
+    </tr></thead><tbody>`;
+
+  keys.forEach(k => {
+    const f = GROUP_FIELDS.find(x => x.key === k);
+    const label = f ? f.label : k;
+    html += `<tr>
+      <td class="lbl-cell">${esc(label)}</td>
+      <td style="color:#065f46;font-weight:600">✓ ${esc(sjDetected[k])}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+
+  $('#sjPreviewScroll').innerHTML = html;
+  $('#sjPreviewBox').classList.add('show');
+}
+
+/* ---------- RENDER SINGLE PREVIEW (fallback manual) ---------- */
 function renderSjPreview(){
   const keys = Object.keys(sjDetected);
+  $('#sjPreviewTitle').textContent = '🔍 Hasil Deteksi (bisa diedit)';
   $('#sjPreviewCount').textContent = keys.length + ' field';
 
   if(keys.length === 0){
@@ -2560,16 +2862,6 @@ function renderSjPreview(){
   });
   html += '</tbody></table>';
 
-  html += `<div style="padding:12px;background:#f8fafc;border-top:1px solid #e2e8f0;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-    <span style="font-size:11.5px;font-weight:700;color:#475569">➕ Tambah Field Manual:</span>
-    <select id="sjAddFieldSel" style="padding:6px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px">
-      <option value="">-- pilih field --</option>
-      ${GROUP_FIELDS.filter(gf => !sjDetected[gf.key])
-        .map(gf => `<option value="${gf.key}">${esc(gf.label)}</option>`).join('')}
-    </select>
-    <button type="button" id="sjAddFieldBtn" style="padding:6px 12px;border:1px solid #cbd5e1;background:#fff;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Tambah</button>
-  </div>`;
-
   $('#sjPreviewScroll').innerHTML = html;
   $('#sjPreviewBox').classList.add('show');
 
@@ -2582,116 +2874,6 @@ function renderSjPreview(){
       renderSjPreview();
     });
   });
-  const addBtn = $('#sjAddFieldBtn');
-  if(addBtn){
-    addBtn.addEventListener('click', () => {
-      const k = $('#sjAddFieldSel').value;
-      if(!k) return;
-      sjDetected[k] = '';
-      renderSjPreview();
-    });
-  }
-}
-
-function renderMultiSj(){
-  const wrap = $('#sjMultiList');
-  if(!sjMultiResults.length){
-    wrap.innerHTML = '<div style="padding:20px;text-align:center;color:#94a3b8">Tidak ada SJ terdeteksi</div>';
-    return;
-  }
-
-  const groups = [...getGroups().keys()].sort();
-
-  wrap.innerHTML = sjMultiResults.map((r, i) => {
-    const sjNo = r.fields.nomorSuratJalanP3 || '(tanpa nomor)';
-    const fieldCount = Object.keys(r.fields).filter(k => String(r.fields[k]||'').trim() !== '').length;
-    const matched = r.matchedGroup;
-    const badgeCls = matched ? '' : 'warn';
-    const badgeTxt = matched ? '✓ auto-match' : '⚠ belum cocok';
-
-    const rows = GROUP_FIELDS.map(f => {
-      const v = r.fields[f.key] ?? '';
-      return `<div class="row">
-        <label>${esc(f.label)}</label>
-        <input type="text" data-idx="${i}" data-field="${f.key}" value="${esc(v)}">
-      </div>`;
-    }).join('');
-
-    const groupOpts = '<option value="">-- pilih grup --</option>' +
-      groups.map(g => `<option value="${esc(g)}" ${g === matched ? 'selected' : ''}>${esc(g)}</option>`).join('');
-
-    return `<div class="sj-multi-card" data-idx="${i}">
-      <div class="sj-multi-head" data-toggle="${i}">
-        <div class="idx">${i+1}</div>
-        <div class="ttl">${esc(sjNo)}</div>
-        <span class="badge ${badgeCls}">${badgeTxt}</span>
-        <span style="font-size:11px;color:#64748b">${fieldCount} field</span>
-        <span style="font-size:14px;color:#64748b">▾</span>
-      </div>
-      <div class="sj-multi-body" data-body="${i}">
-        <div class="row">
-          <label>🎯 Grup Target</label>
-          <select data-group-idx="${i}">${groupOpts}</select>
-        </div>
-        ${rows}
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button type="button" class="btn ghost" style="font-size:11.5px;padding:6px 12px" data-remove-idx="${i}">🗑 Hapus SJ ini</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  wrap.querySelectorAll('.sj-multi-head').forEach(h => {
-    h.addEventListener('click', () => {
-      const idx = h.dataset.toggle;
-      const body = wrap.querySelector(`.sj-multi-body[data-body="${idx}"]`);
-      if(body) body.classList.toggle('show');
-      const arrow = h.querySelector('span:last-child');
-      if(arrow) arrow.textContent = body.classList.contains('show') ? '▴' : '▾';
-    });
-  });
-  wrap.querySelectorAll('.sj-multi-body').forEach(b => b.classList.add('show'));
-
-  wrap.querySelectorAll('input[data-idx]').forEach(inp => {
-    inp.addEventListener('input', e => {
-      const i = Number(e.target.dataset.idx);
-      const f = e.target.dataset.field;
-      if(sjMultiResults[i]) sjMultiResults[i].fields[f] = e.target.value;
-    });
-  });
-  wrap.querySelectorAll('select[data-group-idx]').forEach(sel => {
-    sel.addEventListener('change', e => {
-      const i = Number(e.target.dataset.groupIdx);
-      if(sjMultiResults[i]) sjMultiResults[i].matchedGroup = e.target.value;
-    });
-  });
-  wrap.querySelectorAll('[data-remove-idx]').forEach(b => {
-    b.addEventListener('click', e => {
-      e.stopPropagation();
-      const i = Number(b.dataset.removeIdx);
-      sjMultiResults.splice(i, 1);
-      if(sjMultiResults.length <= 1){
-        sjIsMulti = false;
-        $('#sjMultiPill').style.display = 'none';
-        $('#sjMultiWrap').style.display = 'none';
-        $('#sjMultiApplyWrap').style.display = 'none';
-        if(sjMultiResults.length === 1){
-          sjDetected = { ...sjMultiResults[0].fields };
-          renderSjPreview();
-          $('#sjTargetWrap').style.display = 'block';
-          if(sjMultiResults[0].matchedGroup) $('#sjTargetGroup').value = sjMultiResults[0].matchedGroup;
-          $('#sjApplyBtn').disabled = false;
-          $('#sjApplyBtn').textContent = '✓ Terapkan ke Info Pengiriman';
-        }else{
-          $('#sjApplyBtn').disabled = true;
-        }
-      }else{
-        $('#sjMultiCount').textContent = sjMultiResults.length;
-        $('#sjApplyBtn').textContent = `✓ Terapkan ${sjMultiResults.length} SJ`;
-        renderMultiSj();
-      }
-    });
-  });
 }
 
 function showRawText(){
@@ -2701,14 +2883,21 @@ function showRawText(){
   $('#sjRawWrap').classList.add('show');
 }
 
+/* ---------- APPLY MANUAL (fallback single) ---------- */
 function applySjToGroup(){
-  if(sjIsMulti){ applyMultiSj(); return; }
+  if(sjIsMulti) return;
 
-  const targetKey = $('#sjTargetGroup').value;
+  let targetKey = $('#sjTargetGroup').value;
   if(!targetKey){
-    showSjAlert('⚠️ Pilih grup Bukti Transaksi Kirim terlebih dahulu.', 'warn');
-    return;
+    // Buat grup baru dari No SJ
+    targetKey = guessNewGroupName(sjDetected);
+    if(!targetKey){
+      showSjAlert('⚠️ Tidak bisa menentukan nama grup. Isi Nomor Surat Jalan dulu.', 'warn');
+      return;
+    }
+    toast(`🆕 Grup baru dibuat: "${targetKey}"`);
   }
+
   const filled = Object.keys(sjDetected).filter(k => String(sjDetected[k] || '').trim() !== '');
   if(filled.length === 0){
     showSjAlert('⚠️ Tidak ada field untuk diterapkan.', 'warn');
@@ -2728,36 +2917,6 @@ function applySjToGroup(){
   toast(`✅ ${filled.length} field diterapkan ke "${targetKey}"`);
 }
 
-function applyMultiSj(){
-  const applied = [];
-  const skipped = [];
-
-  sjMultiResults.forEach(r => {
-    const targetKey = r.matchedGroup;
-    if(!targetKey){ skipped.push(r.fields.nomorSuratJalanP3 || '(tanpa nomor)'); return; }
-
-    const meta = getMeta(targetKey);
-    const filled = Object.keys(r.fields).filter(k => String(r.fields[k] || '').trim() !== '');
-    filled.forEach(k => { meta[k] = String(r.fields[k]).trim(); });
-    stampMeta(meta);
-    if(!meta.tcode){
-      const tc = deriveTcode(targetKey);
-      if(tc) meta.tcode = tc;
-    }
-    setMeta(targetKey, meta);
-    applied.push(targetKey);
-  });
-
-  renderTable();
-  closeSjModal();
-
-  if(skipped.length > 0){
-    toast(`✅ ${applied.length} SJ diterapkan · ⚠ ${skipped.length} SJ belum punya grup target`);
-  }else{
-    toast(`✅ ${applied.length} SJ berhasil diterapkan`);
-  }
-}
-
 function stampMeta(meta){
   if(currentUser){
     meta.diubahOleh = emailToUsername(currentUser.email || '');
@@ -2767,6 +2926,7 @@ function stampMeta(meta){
   }
 }
 
+/* ---------- TEMPLATE EDITOR ---------- */
 function openSjTmplModal(){
   renderSjTmplList();
   $('#sjTmplOverlay').classList.add('show');
@@ -2861,7 +3021,6 @@ function saveTmplFromUI(){
     (t[f].patterns || []).forEach((p, i) => {
       if(p && !safeRegex(p)){
         badCount++;
-        toast(`⚠️ Regex tidak valid di ${f} pola ${i+1}`);
       }
     });
   });
@@ -2873,6 +3032,7 @@ function saveTmplFromUI(){
   toast('✅ Template deteksi disimpan');
 }
 
+/* ---------- BIND SJ MODAL ---------- */
 function bindSjModal(){
   const uploadBtn = $('#uploadSjBtn');
   if(!uploadBtn) return;
@@ -2894,13 +3054,14 @@ function bindSjModal(){
     $('#sjPreviewBox').classList.remove('show');
     $('#sjMultiWrap').style.display = 'none';
     $('#sjTargetWrap').style.display = 'none';
-    $('#sjMultiApplyWrap').style.display = 'none';
     $('#sjAlert').classList.remove('show');
     $('#sjRawWrap').classList.remove('show');
     $('#sjTypePill').style.display = 'none';
     $('#sjMultiPill').style.display = 'none';
+    $('#sjAutoPill').style.display = 'none';
+    $('#sjAutoBannerWrap').innerHTML = '';
     $('#sjApplyBtn').disabled = true;
-    $('#sjApplyBtn').textContent = '✓ Terapkan ke Info Pengiriman';
+    $('#sjApplyBtn').textContent = '✓ Terapkan';
     $('#sjResetBtn').style.display = 'none';
   });
 
@@ -2950,7 +3111,7 @@ function bindSjModal(){
 }
 
 /* =========================================================
-   INIT (UI + EVENTS)
+   INIT
    ========================================================= */
 function init(){
   $('#today').textContent = new Date().toLocaleDateString('id-ID',
@@ -3044,7 +3205,6 @@ function init(){
     $('#importConfirmBtn').disabled = true;
   });
 
-  // Bind Surat Jalan Modal
   bindSjModal();
 
   document.addEventListener('keydown', e=>{
@@ -3064,7 +3224,7 @@ function init(){
 }
 
 /* =========================================================
-   FIREBASE : AUTH + FIRESTORE
+   FIREBASE
    ========================================================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCJXpd7hicPPiIMnNdTI5xPgVyBcNf5olo",
@@ -3101,14 +3261,14 @@ function emailToUsername(e){
 
 const AUTH_ERRORS = {
   'auth/invalid-email'              : 'Format username tidak valid.',
-  'auth/user-disabled'              : 'Akun ini dinonaktifkan. Hubungi admin.',
+  'auth/user-disabled'              : 'Akun ini dinonaktifkan.',
   'auth/user-not-found'             : 'Username tidak ditemukan.',
   'auth/wrong-password'             : 'Password salah.',
   'auth/invalid-credential'         : 'Username atau password salah.',
   'auth/invalid-login-credentials'  : 'Username atau password salah.',
-  'auth/too-many-requests'          : 'Terlalu banyak percobaan gagal. Coba lagi beberapa saat.',
+  'auth/too-many-requests'          : 'Terlalu banyak percobaan gagal.',
   'auth/network-request-failed'     : 'Koneksi internet bermasalah.',
-  'auth/operation-not-allowed'      : 'Metode login Email/Password belum diaktifkan di Firebase Console.'
+  'auth/operation-not-allowed'      : 'Metode login Email/Password belum diaktifkan.'
 };
 function authMsg(err){
   return AUTH_ERRORS[err && err.code] || (err && err.message) || 'Terjadi kesalahan.';
@@ -3229,7 +3389,7 @@ function startFirestoreSync(){
   }, err=>{
     console.error('Firestore error:', err);
     fsReady = false;
-    toast('⚠️ Gagal sinkron ke server (' + (err.code || 'error') + ')');
+    toast('⚠️ Gagal sinkron ke server');
   });
 }
 
