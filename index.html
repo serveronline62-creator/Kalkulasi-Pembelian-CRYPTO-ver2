@@ -10,9 +10,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <style>
-    /* ============================================================
-       DESIGN TOKENS
-       ============================================================ */
     :root {
       --bg: #0a0d14;
       --bg2: #0f1420;
@@ -72,9 +69,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ============================================================
-       BACKGROUND
-       ============================================================ */
     .bg-grid {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background-image:
@@ -101,15 +95,13 @@
       100% { opacity: 0; transform: translateY(-100vh) scale(1.2); }
     }
 
-    /* ============================================================
-       LOGIN
-       ============================================================ */
     #loginScreen {
       position: fixed; inset: 0; z-index: 200;
       display: flex; align-items: center; justify-content: center;
       background: var(--bg);
       padding: 20px;
       transition: opacity 0.4s, visibility 0.4s;
+      overflow-y: auto;
     }
     #loginScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     .login-box {
@@ -122,6 +114,7 @@
       text-align: center;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
+      margin: auto;
     }
     .login-icon {
       width: 68px; height: 68px; border-radius: 50%;
@@ -179,10 +172,11 @@
       border-radius: 8px;
     }
     .login-hint { font-size: 11px; color: var(--muted); margin-top: 18px; line-height: 1.6; }
+    .login-hint code {
+      background: var(--card2); padding: 1px 6px; border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold);
+    }
 
-    /* ============================================================
-       APP SHELL
-       ============================================================ */
     #appScreen { display: none; }
     .container {
       position: relative; z-index: 1;
@@ -190,9 +184,6 @@
       padding: 16px 16px calc(90px + var(--safe-b));
     }
 
-    /* ============================================================
-       HEADER
-       ============================================================ */
     .header {
       display: flex; align-items: center; gap: 14px;
       margin-bottom: 22px;
@@ -298,9 +289,6 @@
     .btn-logout:hover { border-color: var(--accent); color: var(--accent); }
     .btn-logout span { display: none; }
 
-    /* ============================================================
-       CHART SECTION
-       ============================================================ */
     .chart-section {
       background: var(--card);
       border: 1px solid var(--border);
@@ -346,9 +334,6 @@
     }
     .chart-status .dot.off { background: var(--accent); animation: none; }
 
-    /* ============================================================
-       ADD BUTTON
-       ============================================================ */
     .add-tx-section { margin-bottom: 18px; }
     .btn-add-inline {
       width: 100%; padding: 16px;
@@ -372,7 +357,6 @@
     }
     .btn-add-inline:active { transform: translateY(0); }
 
-    /* FAB untuk mobile */
     .fab {
       display: none;
       position: fixed;
@@ -392,9 +376,6 @@
     .fab:hover { transform: scale(1.06); box-shadow: 0 12px 36px rgba(233,69,96,0.6); }
     .fab:active { transform: scale(0.95); }
 
-    /* ============================================================
-       CURRENT PRICE
-       ============================================================ */
     .current-price-section {
       background: var(--card);
       border: 1px solid var(--border);
@@ -473,9 +454,6 @@
     .cp-hint.auto i { color: var(--green); }
     .cp-hint.manual i { color: var(--gold); }
 
-    /* ============================================================
-       SUMMARY CARDS
-       ============================================================ */
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -525,9 +503,6 @@
     .t-g { color: var(--green); } .t-r { color: var(--accent); }
     .t-y { color: var(--gold); } .t-f { color: var(--fg); }
 
-    /* ============================================================
-       PNL DETAIL
-       ============================================================ */
     .pnl-bar {
       background: var(--card);
       border: 1px solid var(--border);
@@ -572,9 +547,6 @@
       min-width: 2px;
     }
 
-    /* ============================================================
-       TREND ICONS
-       ============================================================ */
     .trend-icon {
       font-size: 14px;
       display: inline-flex; align-items: center; justify-content: center;
@@ -586,9 +558,6 @@
     @keyframes pulseUp { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
     @keyframes pulseDown { 0%,100% { transform: translateY(0); } 50% { transform: translateY(2px); } }
 
-    /* ============================================================
-       TABLE / TRANSACTIONS
-       ============================================================ */
     .table-section {
       background: var(--card);
       border: 1px solid var(--border);
@@ -681,9 +650,6 @@
     .empty-state i { font-size: 44px; margin-bottom: 12px; opacity: 0.3; display: block; }
     .empty-state p { font-size: 13px; }
 
-    /* ============================================================
-       SORTABLE TABLE HEADERS
-       ============================================================ */
     thead th.sortable {
       cursor: pointer;
       user-select: none;
@@ -701,7 +667,6 @@
     }
     thead th.sortable.active .sort-icon { opacity: 1; }
 
-    /* Mobile sort selector */
     .sort-mobile-bar {
       display: none;
       padding: 12px 14px;
@@ -754,9 +719,6 @@
     .sort-dir-btn:hover { border-color: var(--gold); }
     .sort-dir-btn:active { transform: scale(0.94); }
 
-    /* ============================================================
-       TOAST
-       ============================================================ */
     .toast-box {
       position: fixed; top: 16px; right: 16px; left: 16px;
       z-index: 9999;
@@ -786,9 +748,6 @@
     [data-theme="light"] .toast.warning { background: rgba(255,251,235,0.97); color: #b45309; }
     @keyframes toastIn { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
 
-    /* ============================================================
-       FOOTER
-       ============================================================ */
     .footer {
       text-align: center;
       padding: 20px 0;
@@ -798,9 +757,6 @@
     .footer a { color: var(--gold); text-decoration: none; }
     .footer a:hover { text-decoration: underline; }
 
-    /* ============================================================
-       MODAL
-       ============================================================ */
     .modal-overlay {
       position: fixed; inset: 0; z-index: 100;
       background: rgba(0, 0, 0, 0.6);
@@ -932,9 +888,6 @@
     .btn-submit-form:active:not(:disabled) { transform: translateY(0); }
     .btn-submit-form:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ============================================================
-       RESPONSIVE — TABLET
-       ============================================================ */
     @media (min-width: 640px) {
       .container { padding: 22px 24px 70px; }
       .header { padding: 16px 22px; }
@@ -949,9 +902,6 @@
       .toast-box { left: auto; }
     }
 
-    /* ============================================================
-       RESPONSIVE — DESKTOP
-       ============================================================ */
     @media (min-width: 900px) {
       .container { padding: 24px 24px 70px; }
       .header { padding: 18px 26px; top: 16px; }
@@ -965,13 +915,9 @@
       .chart-wrapper { height: 280px; }
     }
 
-    /* ============================================================
-       RESPONSIVE — MOBILE (<= 640px)
-       ============================================================ */
     @media (max-width: 640px) {
       .container { padding: 12px 12px calc(100px + var(--safe-b)); }
 
-      /* Header */
       .header {
         padding: 12px 14px;
         gap: 10px;
@@ -997,7 +943,6 @@
       .theme-toggle { width: 34px; height: 34px; font-size: 13px; }
       .btn-logout { padding: 8px 10px; font-size: 11px; }
 
-      /* Chart */
       .chart-section { padding: 16px; border-radius: var(--radius); margin-bottom: 14px; }
       .chart-price { font-size: 20px; gap: 6px; }
       .chart-change { font-size: 11px; padding: 2px 6px; }
@@ -1005,11 +950,9 @@
       .chart-wrapper { height: 180px; }
       .chart-header { margin-bottom: 12px; }
 
-      /* Hide inline add button, show FAB */
       .add-tx-section { display: none; }
       .fab { display: flex; }
 
-      /* Current price */
       .current-price-section {
         padding: 14px 16px;
         border-radius: var(--radius);
@@ -1021,7 +964,6 @@
       .price-input-wrapper input { font-size: 14px; padding: 12px; min-height: 44px; }
       .price-mode-badge { padding: 10px 12px; min-height: 44px; font-size: 10px; }
 
-      /* Summary grid */
       .summary-grid {
         gap: 10px;
         margin-bottom: 14px;
@@ -1031,18 +973,13 @@
       .card-value { font-size: 15px; }
       .card-sub { font-size: 10px; margin-top: 4px; }
 
-      /* PNL bar */
       .pnl-bar { padding: 16px; border-radius: var(--radius); margin-bottom: 14px; }
       .pnl-bar h3 { font-size: 11px; margin-bottom: 10px; }
       .pnl-row { padding: 10px 0; font-size: 12px; }
       .pnl-val { font-size: 12px; }
 
-      /* Sort mobile bar */
       .sort-mobile-bar { display: flex; }
 
-      /* ============================================================
-         TABLE → CARD VIEW ON MOBILE
-         ============================================================ */
       .table-section { border-radius: var(--radius); margin-bottom: 18px; }
       .table-top { padding: 14px 16px; }
       .table-top h2 { font-size: 12px; }
@@ -1089,10 +1026,8 @@
         flex-shrink: 0;
       }
 
-      /* Sembunyikan kolom "No" di mobile */
       tbody td[data-label="No"] { display: none; }
 
-      /* Baris pertama (coin) jadi header card */
       tbody td[data-label="Coin"] {
         justify-content: flex-start;
         padding: 0 0 10px 0;
@@ -1105,7 +1040,6 @@
         padding: 5px 12px;
       }
 
-      /* Aksi di pojok kanan atas */
       tbody td[data-label="Aksi"] {
         position: absolute;
         top: 10px; right: 10px;
@@ -1122,7 +1056,6 @@
         font-size: 11px;
       }
 
-      /* Override kolom tanggal di mobile */
       tbody td[data-label="Tanggal & Waktu"] {
         display: block;
         padding: 0 0 10px 0;
@@ -1140,7 +1073,6 @@
         font-size: 12px;
       }
 
-      /* Modal → bottom sheet */
       .modal-overlay {
         align-items: flex-end;
         padding: 0;
@@ -1168,13 +1100,9 @@
       .coin-preview .cp-val { font-size: 14px; }
       .btn-submit-form { padding: 14px; font-size: 14px; min-height: 50px; margin-top: 16px; }
 
-      /* Toast */
       .toast { font-size: 12px; padding: 11px 14px; }
     }
 
-    /* ============================================================
-       RESPONSIVE — SANGAT KECIL (<= 380px)
-       ============================================================ */
     @media (max-width: 380px) {
       .header-text h1 { font-size: 14px; }
       .live-clock { display: none; }
@@ -1182,9 +1110,6 @@
       .card-value { font-size: 14px; }
     }
 
-    /* ============================================================
-       REDUCED MOTION
-       ============================================================ */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -1192,9 +1117,6 @@
       }
     }
 
-    /* ============================================================
-       SCROLLBAR
-       ============================================================ */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 100px; }
@@ -1208,31 +1130,46 @@
   <div class="toast-box" id="toastBox"></div>
 
   <!-- ============================================================
-       LOGIN SCREEN
+       LOGIN / REGISTER SCREEN
        ============================================================ -->
   <div id="loginScreen">
     <div class="login-box">
       <div class="login-icon"><i class="fas fa-cubes"></i></div>
-      <h2>Selamat Datang</h2>
-      <p>Masuk ke sistem Kalkulasi Pembelian CRYPTO</p>
+      <h2 id="authTitle">Selamat Datang</h2>
+      <p id="authSubtitle">Masuk ke sistem Kalkulasi Pembelian CRYPTO</p>
+
       <form id="loginForm" autocomplete="off" novalidate>
         <div class="login-field">
-          <label>Username / Email</label>
+          <label>Username</label>
           <i class="fas fa-user input-icon"></i>
-          <input type="text" id="loginUser" placeholder="Masukkan username atau email" autocomplete="username" required />
+          <input type="text" id="loginUser" placeholder="Masukkan username" autocomplete="username" required />
         </div>
         <div class="login-field">
           <label>Password</label>
           <i class="fas fa-lock input-icon"></i>
           <input type="password" id="loginPass" placeholder="Masukkan password" autocomplete="current-password" required />
         </div>
+
+        <div class="login-field" id="confirmPassField" style="display:none;">
+          <label>Konfirmasi Password</label>
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="loginPass2" placeholder="Ulangi password" autocomplete="new-password" />
+        </div>
+
         <button type="submit" class="login-btn" id="loginBtn">
-          <i class="fas fa-sign-in-alt"></i> Masuk
+          <i class="fas fa-sign-in-alt"></i> <span id="loginBtnText">Masuk</span>
         </button>
-        <div class="login-error" id="loginError">Username atau password salah!</div>
+
+        <div class="login-error" id="loginError"></div>
+
+        <div style="margin-top:16px;text-align:center;font-size:13px;color:var(--muted);">
+          <span id="switchText">Belum punya akun?</span>
+          <a href="#" id="switchAuth" style="color:var(--gold);font-weight:700;text-decoration:none;margin-left:4px;">Daftar Sekarang</a>
+        </div>
+
         <div class="login-hint">
           Autentikasi via <strong>Firebase Authentication</strong>.<br />
-          Buat user baru di Firebase Console &rarr; Authentication &rarr; Users.
+          Username akan otomatis menjadi <code>username@cryptoapp.local</code>
         </div>
       </form>
     </div>
@@ -1265,7 +1202,6 @@
         </div>
       </header>
 
-      <!-- CHART -->
       <section class="chart-section">
         <div class="chart-header">
           <div class="chart-title"><i class="fas fa-chart-area"></i> Grafik DOGE / IDR</div>
@@ -1284,12 +1220,10 @@
         </div>
       </section>
 
-      <!-- ADD BUTTON (inline, desktop only) -->
       <div class="add-tx-section">
         <button class="btn-add-inline" id="btnOpenModal"><i class="fas fa-plus-circle"></i> Tambah Transaksi Baru</button>
       </div>
 
-      <!-- CURRENT PRICE -->
       <section class="current-price-section">
         <div class="cp-row">
           <label><i class="fas fa-chart-line"></i> Harga Saat Ini (Rp)</label>
@@ -1306,7 +1240,6 @@
         </div>
       </section>
 
-      <!-- SUMMARY -->
       <div class="summary-grid">
         <div class="summary-card sc-koin">
           <div class="card-label"><i class="fas fa-coins"></i> Total Koin</div>
@@ -1327,7 +1260,6 @@
         </div>
       </div>
 
-      <!-- PNL DETAIL -->
       <section class="pnl-bar" id="pnlBar" style="display:none;">
         <h3><i class="fas fa-signal"></i> Detail Perhitungan</h3>
         <div class="pnl-row"><span class="pnl-label"><i class="fas fa-coins"></i> Nilai Investasi Saat Ini</span><span class="pnl-val t-f" id="pnCur">Rp 0</span></div>
@@ -1337,14 +1269,12 @@
         <div class="pnl-progress"><div class="pnl-fill" id="pnFill" style="width:50%;background:var(--muted);"></div></div>
       </section>
 
-      <!-- TRANSACTIONS -->
       <section class="table-section">
         <div class="table-top">
           <h2><i class="fas fa-list-ul"></i> Riwayat Transaksi</h2>
           <span class="table-cnt" id="tCnt">0 transaksi</span>
         </div>
 
-        <!-- SORT MOBILE BAR -->
         <div class="sort-mobile-bar">
           <label><i class="fas fa-sort-amount-down"></i> Urutkan:</label>
           <select id="mobileSortSelect">
@@ -1386,12 +1316,8 @@
       </footer>
     </div>
 
-    <!-- FAB (mobile) -->
     <button class="fab" id="fabAdd" aria-label="Tambah transaksi"><i class="fas fa-plus"></i></button>
 
-    <!-- ============================================================
-         MODAL
-         ============================================================ -->
     <div class="modal-overlay" id="modalOverlay" aria-hidden="true">
       <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-header">
@@ -1438,9 +1364,6 @@
     </div>
   </div>
 
-  <!-- ============================================================
-       FIREBASE SDK
-       ============================================================ -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -1463,12 +1386,11 @@
     const auth = firebase.auth();
     const db   = firebase.database();
 
-    const TX_PATH   = 'transactions';
-    const LOCK_PATH = 'locks';
-    const txRef   = db.ref(TX_PATH);
-    const lockRef = db.ref(LOCK_PATH);
-
     const USER_EMAIL_DOMAIN = '@cryptoapp.local';
+
+    /* Refs di-set setelah user login */
+    let txRef   = null;
+    let lockRef = null;
 
     /* ============================================================
        HELPER
@@ -1485,16 +1407,19 @@
     function authErrorMessage(err) {
       const code = err && err.code ? err.code : '';
       switch (code) {
-        case 'auth/invalid-email':         return 'Format email tidak valid.';
-        case 'auth/user-not-found':        return 'User tidak terdaftar.';
-        case 'auth/wrong-password':        return 'Password salah.';
-        case 'auth/invalid-credential':    return 'Username / email atau password salah.';
-        case 'auth/invalid-login-credentials': return 'Username / email atau password salah.';
-        case 'auth/too-many-requests':     return 'Terlalu banyak percobaan. Coba lagi nanti.';
-        case 'auth/network-request-failed':return 'Koneksi jaringan bermasalah.';
-        case 'auth/user-disabled':         return 'Akun ini dinonaktifkan.';
-        case 'auth/missing-password':      return 'Password wajib diisi.';
-        default:                            return 'Login gagal: ' + (err && err.message ? err.message : code);
+        case 'auth/invalid-email':            return 'Format email tidak valid.';
+        case 'auth/user-not-found':           return 'Akun tidak ditemukan. Silakan daftar dulu.';
+        case 'auth/wrong-password':           return 'Password salah.';
+        case 'auth/invalid-credential':       return 'Username atau password salah.';
+        case 'auth/invalid-login-credentials':return 'Username atau password salah.';
+        case 'auth/email-already-in-use':     return 'Username sudah dipakai. Coba username lain.';
+        case 'auth/weak-password':            return 'Password terlalu lemah (minimal 6 karakter).';
+        case 'auth/too-many-requests':        return 'Terlalu banyak percobaan. Coba lagi nanti.';
+        case 'auth/network-request-failed':   return 'Koneksi jaringan bermasalah.';
+        case 'auth/user-disabled':            return 'Akun ini dinonaktifkan.';
+        case 'auth/missing-password':         return 'Password wajib diisi.';
+        case 'auth/operation-not-allowed':    return 'Registrasi email/password belum diaktifkan di Firebase Console.';
+        default:                              return 'Gagal: ' + (err && err.message ? err.message : code);
       }
     }
 
@@ -1517,41 +1442,125 @@
     }
 
     /* ============================================================
-       LOGIN
+       LOGIN / REGISTER
        ============================================================ */
+    let isRegisterMode = false;
+
+    const authTitle    = $('authTitle');
+    const authSubtitle = $('authSubtitle');
+    const confirmPassField = $('confirmPassField');
+    const switchText   = $('switchText');
+    const switchAuth   = $('switchAuth');
+
+    function setAuthMode(register) {
+      isRegisterMode = register;
+      const errEl = $('loginError');
+      errEl.style.display = 'none';
+
+      if (register) {
+        authTitle.textContent = 'Buat Akun Baru';
+        authSubtitle.textContent = 'Daftar untuk mulai mencatat transaksi crypto Anda';
+        confirmPassField.style.display = 'block';
+        $('loginPass').setAttribute('autocomplete', 'new-password');
+        $('loginBtn').querySelector('i').className = 'fas fa-user-plus';
+        $('loginBtnText').textContent = 'Daftar';
+        switchText.textContent = 'Sudah punya akun?';
+        switchAuth.textContent = 'Masuk di sini';
+      } else {
+        authTitle.textContent = 'Selamat Datang';
+        authSubtitle.textContent = 'Masuk ke sistem Kalkulasi Pembelian CRYPTO';
+        confirmPassField.style.display = 'none';
+        $('loginPass').setAttribute('autocomplete', 'current-password');
+        $('loginBtn').querySelector('i').className = 'fas fa-sign-in-alt';
+        $('loginBtnText').textContent = 'Masuk';
+        switchText.textContent = 'Belum punya akun?';
+        switchAuth.textContent = 'Daftar Sekarang';
+      }
+
+      $('loginUser').value = '';
+      $('loginPass').value = '';
+      $('loginPass2').value = '';
+    }
+
+    switchAuth.addEventListener('click', (e) => {
+      e.preventDefault();
+      setAuthMode(!isRegisterMode);
+    });
+
     $('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const errEl  = $('loginError');
       const btn    = $('loginBtn');
-      const rawUser= $('loginUser').value;
+      const rawUser= $('loginUser').value.trim();
       const pass   = $('loginPass').value;
+      const pass2  = $('loginPass2').value;
 
       errEl.style.display = 'none';
 
       if (!rawUser || !pass) {
-        errEl.textContent = 'Username / email dan password wajib diisi.';
+        errEl.textContent = 'Username dan password wajib diisi.';
         errEl.style.display = 'block';
         return;
+      }
+
+      // Validasi username saat register
+      if (isRegisterMode && !rawUser.includes('@')) {
+        if (!/^[a-zA-Z0-9_.]{3,30}$/.test(rawUser)) {
+          errEl.textContent = 'Username hanya boleh huruf, angka, titik, underscore (3-30 karakter).';
+          errEl.style.display = 'block';
+          return;
+        }
+      }
+
+      if (isRegisterMode) {
+        if (pass.length < 6) {
+          errEl.textContent = 'Password minimal 6 karakter.';
+          errEl.style.display = 'block';
+          return;
+        }
+        if (pass !== pass2) {
+          errEl.textContent = 'Konfirmasi password tidak cocok.';
+          errEl.style.display = 'block';
+          return;
+        }
       }
 
       const email = usernameToEmail(rawUser);
 
       btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (isRegisterMode ? 'Mendaftar...' : 'Memproses...');
 
       try {
         await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-        await auth.signInWithEmailAndPassword(email, pass);
-        toast('Login berhasil', 'success');
+
+        if (isRegisterMode) {
+          const cred = await auth.createUserWithEmailAndPassword(email, pass);
+
+          // Simpan profil username
+          await db.ref('users/' + cred.user.uid + '/profile').set({
+            username: rawUser,
+            email: email,
+            createdAt: Date.now()
+          });
+
+          toast('Akun berhasil dibuat! Selamat datang 🎉', 'success');
+        } else {
+          await auth.signInWithEmailAndPassword(email, pass);
+          toast('Login berhasil', 'success');
+        }
+
         $('loginPass').value = '';
+        $('loginPass2').value = '';
+        setAuthMode(false);
       } catch (err) {
-        console.error('Login error:', err);
+        console.error('Auth error:', err);
         errEl.textContent = authErrorMessage(err);
         errEl.style.display = 'block';
         $('loginPass').value = '';
+        $('loginPass2').value = '';
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+        btn.innerHTML = '<i class="fas ' + (isRegisterMode ? 'fa-user-plus' : 'fa-sign-in-alt') + '"></i> <span id="loginBtnText">' + (isRegisterMode ? 'Daftar' : 'Masuk') + '</span>';
       }
     });
 
@@ -1658,9 +1667,21 @@
         loginScreen.classList.add('hidden');
         appScreen.style.display = 'block';
 
-        const label = user.email || user.uid;
-        $('userEmail').textContent = label;
-        $('userChip').title = 'Login sebagai: ' + label;
+        // Set refs per user
+        txRef   = db.ref('users/' + user.uid + '/transactions');
+        lockRef = db.ref('users/' + user.uid + '/locks');
+
+        // Tampilkan username
+        db.ref('users/' + user.uid + '/profile/username').once('value')
+          .then(snap => {
+            const uname = snap.val() || user.email;
+            $('userEmail').textContent = uname;
+            $('userChip').title = 'Login sebagai: ' + uname;
+          })
+          .catch(() => {
+            $('userEmail').textContent = user.email;
+            $('userChip').title = 'Login sebagai: ' + user.email;
+          });
 
         initApp();
       } else {
@@ -1673,20 +1694,19 @@
         transactions = [];
         lockedRows   = [];
         appInitialized = false;
+        txRef = null;
+        lockRef = null;
 
-        // Reset chart runtime, tapi JANGAN hapus history di localStorage
         if (priceChart) {
           priceChart.destroy();
           priceChart = null;
         }
-        // NOTE: chartLabels/chartData TIDAK di-reset di sini supaya
-        // history tetap tersedia untuk user berikutnya / refresh.
       }
     });
 
     function detachListeners() {
-      try { txRef.off(); } catch (e) {}
-      try { lockRef.off(); } catch (e) {}
+      try { if (txRef) txRef.off(); } catch (e) {}
+      try { if (lockRef) lockRef.off(); } catch (e) {}
       listenerAttached = false;
       lockListenerAttached = false;
     }
@@ -1873,9 +1893,6 @@
       }
     });
 
-    /* ============================================================
-       HANDLER HARGA MANUAL
-       ============================================================ */
     function handleManualPriceInput() {
       if (isAutoUpdating) return;
 
@@ -1905,11 +1922,8 @@
     let lastPrice   = null;
     let chartFetchTimer = null;
 
-    /* ============================================================
-       PERSISTENSI GRAFIK — agar tetap ada setelah refresh
-       ============================================================ */
     const CHART_STORAGE_KEY = 'doge_chart_history';
-    const CHART_MAX_AGE = 6 * 60 * 60 * 1000; // 6 jam
+    const CHART_MAX_AGE = 6 * 60 * 60 * 1000;
 
     function saveChartHistory() {
       try {
@@ -1931,7 +1945,6 @@
         const parsed = JSON.parse(raw);
         if (!parsed || !Array.isArray(parsed.labels) || !Array.isArray(parsed.data)) return false;
 
-        // Buang data yang sudah terlalu tua
         if (parsed.savedAt && (Date.now() - parsed.savedAt) > CHART_MAX_AGE) {
           localStorage.removeItem(CHART_STORAGE_KEY);
           return false;
@@ -1941,7 +1954,6 @@
         chartData   = parsed.data.slice();
         lastPrice   = (typeof parsed.lastPrice === 'number') ? parsed.lastPrice : null;
 
-        // Batasi jumlah data
         while (chartLabels.length > MAX_DATA_POINTS) {
           chartLabels.shift();
           chartData.shift();
@@ -1954,7 +1966,6 @@
     }
 
     function initChart() {
-      // Muat history dari localStorage jika chartLabels masih kosong
       if (!chartLabels.length) {
         loadChartHistory();
       }
@@ -2065,11 +2076,8 @@
         if (priceChart) priceChart.update('none');
 
         lastPrice = price;
-
-        // Simpan history agar tetap ada setelah refresh
         saveChartHistory();
 
-        // Hanya timpa input harga jika mode AUTO aktif
         if (autoPriceMode) {
           const curPriceInput = $('curPrice');
           const newVal = String(Math.round(price));
@@ -2094,14 +2102,12 @@
       if (priceChart) return;
       initChart();
 
-      // Tampilkan data lama (jika ada) sebelum fetch baru
       if (chartLabels.length && chartData.length) {
         $('chartPriceLabel').textContent = fRp(chartData[chartData.length - 1]);
         $('chartStatusText').textContent = 'Memuat data terbaru...';
         if (priceChart) priceChart.update('none');
       }
 
-      // Isi input harga dari data terakhir (kalau mode AUTO)
       if (autoPriceMode && lastPrice != null) {
         isAutoUpdating = true;
         $('curPrice').value = Math.round(lastPrice);
@@ -2131,7 +2137,6 @@
       }, 100);
     });
 
-    // Simpan history saat tab ditutup / di-refresh
     window.addEventListener('beforeunload', () => {
       if (chartLabels.length) saveChartHistory();
     });
@@ -2144,6 +2149,7 @@
       dot.className = 'status-dot';
       txt.textContent = 'Memeriksa...';
       try {
+        if (!txRef) throw new Error('no ref');
         await Promise.race([
           txRef.limitToLast(1).once('value'),
           new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000))
@@ -2159,7 +2165,7 @@
     }
 
     function attachRealtimeListener() {
-      if (listenerAttached) return;
+      if (listenerAttached || !txRef) return;
       listenerAttached = true;
 
       txRef.on('value', (snap) => {
@@ -2168,23 +2174,27 @@
           .map(k => Object.assign({ id: k }, val[k]))
           .sort((a, b) => (Number(a.timestamp) || 0) - (Number(b.timestamp) || 0));
 
-        localStorage.setItem('doge_tx', JSON.stringify(transactions));
+        const uid = auth.currentUser ? auth.currentUser.uid : 'guest';
+        localStorage.setItem('doge_tx_' + uid, JSON.stringify(transactions));
         render(); calc();
       }, (err) => {
         console.warn('Firebase read error:', err);
         toast('Gagal membaca Firebase: ' + (err.message || ''), 'warning');
-        transactions = JSON.parse(localStorage.getItem('doge_tx') || '[]');
+        const uid = auth.currentUser ? auth.currentUser.uid : 'guest';
+        const cached = localStorage.getItem('doge_tx_' + uid);
+        transactions = cached ? JSON.parse(cached) : [];
         render(); calc();
       });
     }
 
     function syncLocks() {
-      if (lockListenerAttached) return;
+      if (lockListenerAttached || !lockRef) return;
       lockListenerAttached = true;
       lockRef.on('value', (snap) => {
         const val = snap.val() || {};
         lockedRows = Object.keys(val);
-        localStorage.setItem('doge_locks', JSON.stringify(lockedRows));
+        const uid = auth.currentUser ? auth.currentUser.uid : 'guest';
+        localStorage.setItem('doge_locks_' + uid, JSON.stringify(lockedRows));
         render();
       }, () => {});
     }
@@ -2194,6 +2204,11 @@
        ============================================================ */
     async function addTx(tx) {
       const user = auth.currentUser;
+      if (!user || !txRef) {
+        toast('Sesi habis, silakan login ulang', 'error');
+        return false;
+      }
+
       const payload = {
         coin: tx.coin,
         tanggal: tx.tanggal,
@@ -2202,16 +2217,16 @@
         jumlah: tx.harga > 0 ? Number(tx.total) / Number(tx.harga) : 0,
         timestamp: Date.now(),
         createdAt: new Date().toISOString(),
-        createdBy: user ? (user.email || user.uid) : 'unknown'
+        createdBy: user.email || user.uid
       };
 
       try {
         const newRef = await txRef.push(payload);
-        console.log('✅ Tersimpan di Firebase:', TX_PATH + '/' + newRef.key);
+        console.log('✅ Tersimpan:', newRef.key);
         toast('Transaksi tersimpan', 'success');
         return true;
       } catch (e) {
-        console.error('❌ Gagal simpan ke Firebase:', e);
+        console.error('❌ Gagal simpan:', e);
         toast('GAGAL simpan: ' + (e.message || 'periksa rules'), 'error');
         return false;
       }
@@ -2219,8 +2234,9 @@
 
     async function delTx(id) {
       if (lockedRows.includes(id)) { toast('Transaksi terkunci!', 'warning'); return; }
+      if (!txRef) return;
       try {
-        await db.ref(TX_PATH + '/' + id).remove();
+        await txRef.child(id).remove();
         toast('Transaksi dihapus', 'success');
       } catch (e) {
         console.error('Gagal hapus:', e);
@@ -2229,6 +2245,7 @@
     }
 
     function toggleLock(id) {
+      if (!lockRef) return;
       const isLocked = lockedRows.includes(id);
       if (isLocked) {
         lockRef.child(id).remove()
@@ -2242,7 +2259,7 @@
     }
 
     /* ============================================================
-       RENDER — dengan data-label untuk mobile card view
+       RENDER
        ============================================================ */
     function render() {
       const tbody = $('tBody');
