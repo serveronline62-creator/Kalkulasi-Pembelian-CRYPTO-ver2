@@ -274,7 +274,6 @@
     }
     .chart-title i { color: var(--gold); font-size: 14px; }
 
-    /* === COIN SELECTOR === */
     .chart-coin-selector {
       display: flex; align-items: center; gap: 8px;
       background: var(--card2); border: 1px solid var(--border);
@@ -548,6 +547,64 @@
       border-radius: 100px; white-space: nowrap;
       border: 1px solid var(--border);
     }
+
+    /* ==== FILTER COIN INDICATOR (WAJIB AKTIF) ==== */
+    .filter-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--brand-soft);
+      border: 1px solid var(--brand-border);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--brand);
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+      animation: filterPulse 2s ease-in-out infinite;
+    }
+    .filter-indicator i.fa-filter {
+      font-size: 10px;
+    }
+    @keyframes filterPulse {
+      0%, 100% { box-shadow: 0 0 0 0 var(--brand-soft); }
+      50% { box-shadow: 0 0 0 6px transparent; }
+    }
+
+    /* ==== BANNER INFO FILTER DI ATAS TABEL ==== */
+    .filter-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, var(--brand-soft), transparent);
+      border-bottom: 1px solid var(--brand-border);
+      font-size: 12px;
+      color: var(--fg);
+      animation: bannerSlide 0.35s ease;
+    }
+    .filter-banner i.fa-info-circle {
+      color: var(--brand);
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .filter-banner .fb-text {
+      flex: 1;
+      line-height: 1.4;
+    }
+    .filter-banner .fb-text strong {
+      color: var(--brand);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+    @keyframes bannerSlide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
     thead th {
@@ -569,7 +626,6 @@
       vertical-align: middle;
     }
 
-    /* ==== BADGE COIN — WARNA BRAND DINAMIS ==== */
     .td-coin {
       background: var(--brand-soft);
       color: var(--brand);
@@ -582,7 +638,6 @@
     }
     .td-date { color: var(--muted); font-size: 12px; }
     .td-total { color: var(--accent2); font-weight: 600; }
-    /* ==== JUMLAH KOIN — WARNA BRAND DINAMIS ==== */
     .td-jumlah {
       color: var(--brand);
       font-weight: 600;
@@ -613,7 +668,7 @@
 
     .empty-state { text-align: center; padding: 44px 20px; color: var(--muted); }
     .empty-state i { font-size: 44px; margin-bottom: 12px; opacity: 0.3; display: block; }
-    .empty-state p { font-size: 13px; }
+    .empty-state p { font-size: 13px; line-height: 1.6; }
 
     thead th.sortable {
       cursor: pointer; user-select: none;
@@ -884,15 +939,24 @@
 
       .sort-mobile-bar { display: flex; }
 
+      .filter-indicator {
+        font-size: 10px;
+        padding: 5px 10px;
+      }
+      .filter-banner {
+        padding: 10px 14px;
+        font-size: 11px;
+        gap: 8px;
+      }
+
       .table-section { border-radius: var(--radius); margin-bottom: 18px; }
-      .table-top { padding: 14px 16px; }
+      .table-top { padding: 14px 16px; flex-wrap: wrap; }
       .table-top h2 { font-size: 12px; }
       .table-cnt { font-size: 10px; padding: 4px 10px; }
       .table-wrap { overflow: visible; padding: 12px; background: transparent; }
       table, thead, tbody, tr, td { display: block; width: 100%; }
       thead { display: none; }
 
-      /* ==== BORDER KIRI CARD — WARNA BRAND DINAMIS ==== */
       tbody tr {
         background: var(--card2); border: 1px solid var(--border);
         border-left: 3px solid var(--brand);
@@ -1074,7 +1138,6 @@
         <div class="chart-header">
           <div>
             <div class="chart-title"><i class="fas fa-chart-area"></i> Grafik <span id="chartCoinLabel">DOGE</span> / IDR</div>
-            <!-- === COIN SELECTOR (SUDAH DITAMBAH BNB) === -->
             <div class="chart-coin-selector">
               <label><i class="fas fa-coins"></i> Pilih Coin:</label>
               <select id="chartCoinSelect">
@@ -1155,7 +1218,22 @@
       <section class="table-section">
         <div class="table-top">
           <h2><i class="fas fa-list-ul"></i> Riwayat Transaksi</h2>
-          <span class="table-cnt" id="tCnt">0 transaksi</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="filter-indicator" id="filterIndicator">
+              <i class="fas fa-filter"></i>
+              <span id="filterCoinName">DOGE</span>
+            </span>
+            <span class="table-cnt" id="tCnt">0 transaksi</span>
+          </div>
+        </div>
+
+        <!-- ==== BANNER INFO FILTER (TANPA TOMBOL) ==== -->
+        <div class="filter-banner" id="filterBanner">
+          <i class="fas fa-info-circle"></i>
+          <div class="fb-text">
+            Menampilkan riwayat untuk coin <strong id="filterBannerCoin">DOGE</strong> saja.
+            Summary di atas juga dihitung dari coin ini.
+          </div>
         </div>
 
         <div class="sort-mobile-bar">
@@ -1211,7 +1289,6 @@
           <div class="form-grid">
             <div class="form-group">
               <label for="inCoin">Coin <span class="req">*</span></label>
-              <!-- === FORM COIN (SUDAH DITAMBAH BNB) === -->
               <select id="inCoin">
                 <option value="DOGE" selected>DOGE</option>
                 <option value="BTC">BTC</option>
@@ -1495,6 +1572,43 @@
     let sortBy  = localStorage.getItem('sort_by')  || 'timestamp';
     let sortDir = localStorage.getItem('sort_dir') || 'asc';
 
+    /* ============================================================
+       FILTER COIN STATE — WAJIB AKTIF, TIDAK BISA GABUNG
+       ============================================================ */
+    let filterCoin = localStorage.getItem('filter_coin') || 'DOGE';
+
+    function applyFilterUI() {
+      const indicator = $('filterIndicator');
+      const nameEl    = $('filterCoinName');
+      const banner    = $('filterBanner');
+      const bannerCoin= $('filterBannerCoin');
+
+      // Selalu tampilkan (karena filter wajib aktif)
+      if (indicator) indicator.classList.add('active');
+      if (nameEl)    nameEl.textContent = filterCoin;
+      if (banner)    banner.classList.add('active');
+      if (bannerCoin) bannerCoin.textContent = filterCoin;
+    }
+
+    function setFilterCoin(coin, scrollToTable = true) {
+      // Filter wajib ada coin — kalau null/kosong, fallback ke DOGE
+      filterCoin = coin ? String(coin).toUpperCase() : 'DOGE';
+      localStorage.setItem('filter_coin', filterCoin);
+
+      applyFilterUI();
+      render();
+      calc();
+
+      if (scrollToTable) {
+        const tableSection = document.querySelector('.table-section');
+        if (tableSection) {
+          setTimeout(() => {
+            tableSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 200);
+        }
+      }
+    }
+
     function applySortUI() {
       document.querySelectorAll('thead th.sortable').forEach(th => {
         const icon = th.querySelector('.sort-icon');
@@ -1533,7 +1647,13 @@
     }
 
     function getSortedTransactions() {
-      const arr = [...transactions];
+      let arr = [...transactions];
+
+      // ==== FILTER WAJIB: hanya tampilkan coin yang dipilih ====
+      if (filterCoin) {
+        arr = arr.filter(t => (t.coin || '').toString().toUpperCase() === filterCoin.toUpperCase());
+      }
+
       const dir = sortDir === 'asc' ? 1 : -1;
       arr.sort((a, b) => {
         switch (sortBy) {
@@ -1596,6 +1716,11 @@
         txRef = null;
         lockRef = null;
 
+        // ==== RESET FILTER SAAT LOGOUT → balik ke default DOGE ====
+        filterCoin = 'DOGE';
+        localStorage.setItem('filter_coin', 'DOGE');
+        applyFilterUI();
+
         if (priceChart) {
           priceChart.destroy();
           priceChart = null;
@@ -1652,7 +1777,7 @@
 
     function resetFormFields() {
       txForm.reset();
-      $('inCoin').value  = 'DOGE';
+      $('inCoin').value  = filterCoin || 'DOGE';
       $('inDate').value  = getTodayLocal();
       $('inPrice').value = '';
       $('inTotal').value = '';
@@ -1667,6 +1792,15 @@
       modalOverlay.classList.add('active');
       modalOverlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+
+      // ==== PREFILL COIN SESUAI FILTER YANG AKTIF ====
+      if (filterCoin) {
+        const coinSelect = $('inCoin');
+        if (coinSelect) {
+          const opt = Array.from(coinSelect.options).find(o => o.value === filterCoin);
+          if (opt) coinSelect.value = filterCoin;
+        }
+      }
 
       const cp = parseFloat($('curPrice').value);
       if (cp > 0) {
@@ -1816,7 +1950,7 @@
     $('curPrice').addEventListener('change', handleManualPriceInput);
 
     /* ============================================================
-       GRAFIK REAL-TIME — CoinGecko (MULTI COIN + BNB)
+       GRAFIK REAL-TIME — CoinGecko (MULTI COIN)
        ============================================================ */
     const COIN_META = {
       dogecoin:    { symbol: 'DOGE', color: '#f0b90b', fill: 'rgba(240,185,11,0.12)' },
@@ -1846,7 +1980,6 @@
       return (COIN_META[selectedCoinId] || COIN_META.dogecoin).symbol;
     }
 
-    /* ==== UPDATE WARNA BRAND DINAMIS ==== */
     function applyBrandColor(coinId) {
       const meta = COIN_META[coinId] || COIN_META.dogecoin;
       const root = document.documentElement;
@@ -2056,7 +2189,7 @@
       }
     }
 
-    /* ==== EVENT GANTI COIN ==== */
+    /* ==== EVENT GANTI COIN → AUTO FILTER RIWAYAT ==== */
     $('chartCoinSelect').addEventListener('change', (e) => {
       const newCoinId = e.target.value;
       if (!COIN_META[newCoinId]) return;
@@ -2094,7 +2227,13 @@
       }
 
       fetchCoinPrice();
-      toast('Beralih ke grafik ' + getCurrentSymbol(), 'info');
+
+      // ==== AUTO FILTER RIWAYAT TRANSAKSI SESUAI COIN YANG DIPILIH ====
+      const symbol = getCurrentSymbol();
+      setFilterCoin(symbol, true);
+
+      const count = transactions.filter(t => (t.coin || '').toUpperCase() === symbol).length;
+      toast('Menampilkan riwayat ' + symbol + ' (' + count + ' transaksi)', 'info');
     });
 
     themeToggle.addEventListener('click', () => {
@@ -2243,15 +2382,18 @@
       if (!tbody) return;
       const cur = parseFloat($('curPrice').value) || 0;
 
-      if (!transactions.length) {
-        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="fas fa-inbox"></i><p>Belum ada transaksi.</p></div></td></tr>';
-        if ($('tCnt')) $('tCnt').textContent = '0 transaksi';
+      const filtered = getSortedTransactions();
+
+      if (!filtered.length) {
+        const msg = 'Belum ada transaksi <strong>' + filterCoin + '</strong>.<br><span style="font-size:11px;opacity:0.7;">Tambahkan transaksi baru untuk coin ini.</span>';
+        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="fas fa-inbox"></i><p>' + msg + '</p></div></td></tr>';
+        if ($('tCnt')) {
+          $('tCnt').textContent = '0 dari ' + transactions.length + ' transaksi';
+        }
         return;
       }
 
-      const sorted = getSortedTransactions();
-
-      tbody.innerHTML = sorted.map((t, i) => {
+      tbody.innerHTML = filtered.map((t, i) => {
         const isLocked = lockedRows.includes(t.id);
         return '<tr>' +
           '<td data-label="No" style="color:var(--muted)">' + (i + 1) + '</td>' +
@@ -2270,7 +2412,9 @@
         '</tr>';
       }).join('');
 
-      if ($('tCnt')) $('tCnt').textContent = transactions.length + ' transaksi';
+      if ($('tCnt')) {
+        $('tCnt').textContent = filtered.length + ' dari ' + transactions.length + ' transaksi';
+      }
     }
 
     $('tBody').addEventListener('click', (e) => {
@@ -2316,10 +2460,13 @@
        KALKULASI
        ============================================================ */
     function calc() {
+      // ==== HITUNG HANYA DARI TRANSAKSI YANG DIFILTER ====
+      const filtered = getSortedTransactions();
+
       let tKoin = 0, tModal = 0;
-      transactions.forEach(t => {
-        tKoin += Number(t.jumlah) || 0;
-        tModal += Number(t.total) || 0;
+      filtered.forEach(t => {
+        tKoin  += Number(t.jumlah) || 0;
+        tModal += Number(t.total)  || 0;
       });
 
       const avg = tKoin > 0 ? tModal / tKoin : 0;
@@ -2328,9 +2475,9 @@
       const pnl = curVal - tModal;
       const pnlPct = tModal > 0 ? (pnl / tModal) * 100 : 0;
 
-      if ($('sKoin'))  $('sKoin').textContent = fKoin(tKoin);
+      if ($('sKoin'))  $('sKoin').textContent  = fKoin(tKoin);
       if ($('sModal')) $('sModal').textContent = fRp(tModal);
-      if ($('sAvg'))   $('sAvg').textContent = fRp(avg);
+      if ($('sAvg'))   $('sAvg').textContent   = fRp(avg);
 
       const pnlEl = $('sPnl');
       const pctEl = $('sPnlPct');
@@ -2345,7 +2492,7 @@
 
       if (cur > 0 && tKoin > 0) {
         if ($('pnlBar')) $('pnlBar').style.display = 'block';
-        if ($('pnCur'))  $('pnCur').innerHTML = fRp(curVal);
+        if ($('pnCur'))  $('pnCur').innerHTML  = fRp(curVal);
         if ($('pnCost')) $('pnCost').innerHTML = fRp(tModal);
         if ($('pnAmt')) {
           $('pnAmt').innerHTML = fRp(pnl) + ' ' + getTrendIcon(avg, cur);
@@ -2419,6 +2566,33 @@
       if (ok) {
         formDirty = false;
         closeModal(true);
+
+        // ==== AUTO-SWITCH FILTER KE COIN YANG BARU DITAMBAHKAN ====
+        const newFilter = coin.toUpperCase();
+        if (newFilter !== filterCoin) {
+          // Sinkronkan chart coin dengan coin yang baru ditambahkan
+          const coinIdEntry = Object.keys(COIN_META).find(k => COIN_META[k].symbol === newFilter);
+          if (coinIdEntry && coinIdEntry !== selectedCoinId) {
+            selectedCoinId = coinIdEntry;
+            localStorage.setItem('chart_coin_id', selectedCoinId);
+            applyBrandColor(selectedCoinId);
+            if ($('chartCoinLabel')) $('chartCoinLabel').textContent = getCurrentSymbol();
+            const sel = $('chartCoinSelect');
+            if (sel) sel.value = selectedCoinId;
+
+            if (priceChart) {
+              priceChart.destroy();
+              priceChart = null;
+            }
+            chartLabels = [];
+            chartData   = [];
+            lastPrice   = null;
+            loadChartHistory();
+            initChart();
+            fetchCoinPrice();
+          }
+          setFilterCoin(newFilter, false);
+        }
       }
 
       btn.disabled = false;
@@ -2470,8 +2644,17 @@
       if (appInitialized) return;
       appInitialized = true;
 
+      // Sinkronkan filterCoin dengan chart_coin_id yang tersimpan
+      const savedCoinId = localStorage.getItem('chart_coin_id') || 'dogecoin';
+      const savedSymbol = (COIN_META[savedCoinId] || COIN_META.dogecoin).symbol;
+      if (!localStorage.getItem('filter_coin')) {
+        filterCoin = savedSymbol;
+        localStorage.setItem('filter_coin', filterCoin);
+      }
+
       applyPriceModeUI();
       applySortUI();
+      applyFilterUI();
       initParticles();
       updateClock();
       startPriceChart();
