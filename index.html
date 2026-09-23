@@ -24,6 +24,11 @@
       --header-bg: rgba(10, 13, 20, 0.78);
       --radius: 16px; --radius-sm: 12px; --radius-lg: 22px;
       --safe-b: env(safe-area-inset-bottom, 0px);
+
+      /* ==== VARIABEL BRAND COIN DINAMIS ==== */
+      --brand: #f0b90b;
+      --brand-soft: rgba(240,185,11,0.14);
+      --brand-border: rgba(240,185,11,0.35);
     }
     [data-theme="light"] {
       --bg: #f4f6fa; --bg2: #ffffff;
@@ -177,11 +182,13 @@
       box-shadow: 0 0 30px rgba(240,185,11,0.35);
       position: relative; flex-shrink: 0;
       animation: coinGlow 3s ease-in-out infinite;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
     }
     .coin-icon::after {
       content: ''; position: absolute; inset: -4px;
       border-radius: 50%; border: 2px solid rgba(240,185,11,0.35);
       animation: coinPulse 3s ease-in-out infinite;
+      transition: border-color 0.4s ease;
     }
     @keyframes coinGlow {
       0%,100% { box-shadow: 0 0 30px rgba(240,185,11,0.35); }
@@ -266,6 +273,37 @@
       text-transform: uppercase; letter-spacing: 0.5px;
     }
     .chart-title i { color: var(--gold); font-size: 14px; }
+
+    /* === COIN SELECTOR === */
+    .chart-coin-selector {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px 4px 12px;
+      margin-top: 6px;
+    }
+    .chart-coin-selector label {
+      font-size: 11px; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+      font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.4px; white-space: nowrap;
+    }
+    .chart-coin-selector label i { color: var(--gold); }
+    .chart-coin-selector select {
+      background: transparent; border: none;
+      color: var(--fg); font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+      padding: 6px 24px 6px 6px; cursor: pointer;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8ba8' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+      outline: none;
+    }
+    .chart-coin-selector select option {
+      background: var(--card-solid); color: var(--fg);
+    }
+
     .chart-price {
       font-family: 'JetBrains Mono', monospace;
       font-size: 24px; font-weight: 700;
@@ -530,18 +568,26 @@
       white-space: nowrap;
       vertical-align: middle;
     }
+
+    /* ==== BADGE COIN — WARNA BRAND DINAMIS ==== */
     .td-coin {
-      background: rgba(240,185,11,0.14);
-      color: var(--gold);
+      background: var(--brand-soft);
+      color: var(--brand);
       padding: 4px 10px; border-radius: 6px;
       font-weight: 700; font-size: 11px;
       display: inline-block;
-      border: 1px solid rgba(240,185,11,0.25);
+      border: 1px solid var(--brand-border);
       letter-spacing: 0.5px;
+      transition: color 0.4s ease, background 0.4s ease, border-color 0.4s ease;
     }
     .td-date { color: var(--muted); font-size: 12px; }
     .td-total { color: var(--accent2); font-weight: 600; }
-    .td-jumlah { color: var(--green); font-weight: 600; }
+    /* ==== JUMLAH KOIN — WARNA BRAND DINAMIS ==== */
+    .td-jumlah {
+      color: var(--brand);
+      font-weight: 600;
+      transition: color 0.4s ease;
+    }
 
     .action-group { display: flex; gap: 6px; align-items: center; }
     .btn-action {
@@ -812,6 +858,8 @@
       .chart-title { font-size: 11px; }
       .chart-wrapper { height: 180px; }
       .chart-header { margin-bottom: 12px; }
+      .chart-coin-selector { padding: 3px 6px 3px 10px; }
+      .chart-coin-selector select { font-size: 12px; }
 
       .add-tx-section { display: none; }
       .fab { display: flex; }
@@ -844,11 +892,13 @@
       table, thead, tbody, tr, td { display: block; width: 100%; }
       thead { display: none; }
 
+      /* ==== BORDER KIRI CARD — WARNA BRAND DINAMIS ==== */
       tbody tr {
         background: var(--card2); border: 1px solid var(--border);
+        border-left: 3px solid var(--brand);
         border-radius: var(--radius-sm); padding: 14px;
         margin-bottom: 10px; position: relative;
-        transition: border-color 0.2s, transform 0.15s;
+        transition: border-color 0.4s ease, transform 0.15s;
       }
       tbody tr:last-child { margin-bottom: 0; }
       tbody tr:hover { background: var(--card2); }
@@ -1022,7 +1072,22 @@
 
       <section class="chart-section">
         <div class="chart-header">
-          <div class="chart-title"><i class="fas fa-chart-area"></i> Grafik DOGE / IDR</div>
+          <div>
+            <div class="chart-title"><i class="fas fa-chart-area"></i> Grafik <span id="chartCoinLabel">DOGE</span> / IDR</div>
+            <!-- === COIN SELECTOR (SUDAH DITAMBAH BNB) === -->
+            <div class="chart-coin-selector">
+              <label><i class="fas fa-coins"></i> Pilih Coin:</label>
+              <select id="chartCoinSelect">
+                <option value="dogecoin">DOGE</option>
+                <option value="bitcoin">BTC</option>
+                <option value="ethereum">ETH</option>
+                <option value="binancecoin">BNB</option>
+                <option value="solana">SOL</option>
+                <option value="ripple">XRP</option>
+                <option value="cardano">ADA</option>
+              </select>
+            </div>
+          </div>
           <div style="text-align:right;">
             <div class="chart-price">
               <span id="chartPriceLabel">Rp 0</span>
@@ -1146,10 +1211,12 @@
           <div class="form-grid">
             <div class="form-group">
               <label for="inCoin">Coin <span class="req">*</span></label>
+              <!-- === FORM COIN (SUDAH DITAMBAH BNB) === -->
               <select id="inCoin">
                 <option value="DOGE" selected>DOGE</option>
                 <option value="BTC">BTC</option>
                 <option value="ETH">ETH</option>
+                <option value="BNB">BNB</option>
                 <option value="SOL">SOL</option>
                 <option value="XRP">XRP</option>
                 <option value="ADA">ADA</option>
@@ -1206,7 +1273,6 @@
       appId: "1:416762367242:web:f02d6221ddeb672d813ef3"
     };
 
-    // Cek apakah Firebase SDK sudah loaded
     if (typeof firebase === 'undefined') {
       console.error('Firebase SDK belum dimuat!');
       alert('Gagal memuat Firebase SDK. Periksa koneksi internet Anda.');
@@ -1219,7 +1285,6 @@
 
     const USER_EMAIL_DOMAIN = '@cryptoapp.local';
 
-    /* Refs di-set setelah user login */
     let txRef   = null;
     let lockRef = null;
 
@@ -1729,7 +1794,7 @@
           isAutoUpdating = false;
           calc();
         } else {
-          fetchDogecoinPrice().then(() => calc());
+          fetchCoinPrice().then(() => calc());
         }
       } else {
         toast('Mode MANUAL aktif — kamu bisa isi harga sendiri', 'info');
@@ -1751,9 +1816,18 @@
     $('curPrice').addEventListener('change', handleManualPriceInput);
 
     /* ============================================================
-       GRAFIK REAL-TIME — CoinGecko
+       GRAFIK REAL-TIME — CoinGecko (MULTI COIN + BNB)
        ============================================================ */
-    const COINGECKO_URL = 'https://api.coingecko.com/api/v3/simple/price?ids=dogecoin&vs_currencies=idr&include_24hr_change=true';
+    const COIN_META = {
+      dogecoin:    { symbol: 'DOGE', color: '#f0b90b', fill: 'rgba(240,185,11,0.12)' },
+      bitcoin:     { symbol: 'BTC',  color: '#f7931a', fill: 'rgba(247,147,26,0.12)' },
+      ethereum:    { symbol: 'ETH',  color: '#627eea', fill: 'rgba(98,126,234,0.12)' },
+      binancecoin: { symbol: 'BNB',  color: '#f3ba2f', fill: 'rgba(243,186,47,0.12)' },
+      solana:      { symbol: 'SOL',  color: '#14f195', fill: 'rgba(20,241,149,0.12)' },
+      ripple:      { symbol: 'XRP',  color: '#00aae4', fill: 'rgba(0,170,228,0.12)' },
+      cardano:     { symbol: 'ADA',  color: '#0033ad', fill: 'rgba(0,51,173,0.12)' }
+    };
+
     const MAX_DATA_POINTS = 60;
     const REFRESH_INTERVAL = 30000;
 
@@ -1763,12 +1837,32 @@
     let lastPrice   = null;
     let chartFetchTimer = null;
 
-    const CHART_STORAGE_KEY = 'doge_chart_history';
-    const CHART_MAX_AGE = 6 * 60 * 60 * 1000;
+    let selectedCoinId = localStorage.getItem('chart_coin_id') || 'dogecoin';
+
+    function getChartStorageKey() {
+      return 'chart_history_' + selectedCoinId;
+    }
+    function getCurrentSymbol() {
+      return (COIN_META[selectedCoinId] || COIN_META.dogecoin).symbol;
+    }
+
+    /* ==== UPDATE WARNA BRAND DINAMIS ==== */
+    function applyBrandColor(coinId) {
+      const meta = COIN_META[coinId] || COIN_META.dogecoin;
+      const root = document.documentElement;
+      const hex = meta.color.replace('#', '');
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+
+      root.style.setProperty('--brand', meta.color);
+      root.style.setProperty('--brand-soft', 'rgba(' + r + ',' + g + ',' + b + ',0.14)');
+      root.style.setProperty('--brand-border', 'rgba(' + r + ',' + g + ',' + b + ',0.35)');
+    }
 
     function saveChartHistory() {
       try {
-        localStorage.setItem(CHART_STORAGE_KEY, JSON.stringify({
+        localStorage.setItem(getChartStorageKey(), JSON.stringify({
           labels: chartLabels, data: chartData,
           lastPrice: lastPrice, savedAt: Date.now()
         }));
@@ -1777,12 +1871,12 @@
 
     function loadChartHistory() {
       try {
-        const raw = localStorage.getItem(CHART_STORAGE_KEY);
+        const raw = localStorage.getItem(getChartStorageKey());
         if (!raw) return false;
         const parsed = JSON.parse(raw);
         if (!parsed || !Array.isArray(parsed.labels) || !Array.isArray(parsed.data)) return false;
-        if (parsed.savedAt && (Date.now() - parsed.savedAt) > CHART_MAX_AGE) {
-          localStorage.removeItem(CHART_STORAGE_KEY);
+        if (parsed.savedAt && (Date.now() - parsed.savedAt) > (6 * 60 * 60 * 1000)) {
+          localStorage.removeItem(getChartStorageKey());
           return false;
         }
         chartLabels = parsed.labels.slice();
@@ -1801,19 +1895,20 @@
       const isLight = document.documentElement.getAttribute('data-theme') === 'light';
       const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
       const textColor = isLight ? '#5a6478' : '#7a8ba8';
+      const meta = COIN_META[selectedCoinId] || COIN_META.dogecoin;
 
       priceChart = new Chart(ctx, {
         type: 'line',
         data: {
           labels: chartLabels,
           datasets: [{
-            label: 'DOGE / IDR',
+            label: meta.symbol + ' / IDR',
             data: chartData,
-            borderColor: '#f0b90b',
-            backgroundColor: 'rgba(240,185,11,0.12)',
+            borderColor: meta.color,
+            backgroundColor: meta.fill,
             borderWidth: 2, tension: 0.35, fill: true,
             pointRadius: 0, pointHoverRadius: 4,
-            pointHoverBackgroundColor: '#f0b90b',
+            pointHoverBackgroundColor: meta.color,
             pointHoverBorderColor: '#fff', pointHoverBorderWidth: 2
           }]
         },
@@ -1846,6 +1941,7 @@
                 color: textColor, font: { family: 'JetBrains Mono', size: 10 },
                 maxTicksLimit: 8, autoSkip: true,
                 callback: function (v) {
+                  if (v >= 1000000000) return (v / 1000000000).toFixed(2) + 'M';
                   if (v >= 1000000) return (v / 1000000).toFixed(2) + 'jt';
                   if (v >= 1000)    return (v / 1000).toFixed(2) + 'rb';
                   if (v >= 100)     return v.toFixed(0);
@@ -1859,19 +1955,21 @@
       });
     }
 
-    async function fetchDogecoinPrice() {
+    async function fetchCoinPrice() {
       const statusEl = $('chartStatusText');
       const statusContainer = $('chartStatus');
       const dotEl = statusContainer ? statusContainer.querySelector('.dot') : null;
+      const url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + selectedCoinId + '&vs_currencies=idr&include_24hr_change=true';
+
       try {
-        const res = await fetch(COINGECKO_URL, { cache: 'no-store' });
+        const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const json = await res.json();
-        const doge = json.dogecoin;
-        if (!doge || typeof doge.idr !== 'number') throw new Error('Data tidak valid');
+        const coin = json[selectedCoinId];
+        if (!coin || typeof coin.idr !== 'number') throw new Error('Data tidak valid');
 
-        const price = doge.idr;
-        const change24h = typeof doge.idr_24h_change === 'number' ? doge.idr_24h_change : 0;
+        const price = coin.idr;
+        const change24h = typeof coin.idr_24h_change === 'number' ? coin.idr_24h_change : 0;
 
         if ($('chartPriceLabel')) $('chartPriceLabel').textContent = fRp(price);
         const changeEl = $('chartChangeLabel');
@@ -1908,7 +2006,7 @@
         }
         return price;
       } catch (err) {
-        console.warn('Gagal ambil harga DOGE:', err);
+        console.warn('Gagal ambil harga ' + selectedCoinId + ':', err);
         if (statusEl) statusEl.textContent = 'Gagal memperbarui — coba lagi';
         if (dotEl) dotEl.classList.add('off');
         return null;
@@ -1916,7 +2014,70 @@
     }
 
     function startPriceChart() {
-      if (priceChart) return;
+      applyBrandColor(selectedCoinId);
+      if ($('chartCoinLabel')) $('chartCoinLabel').textContent = getCurrentSymbol();
+      const sel = $('chartCoinSelect');
+      if (sel && sel.value !== selectedCoinId) sel.value = selectedCoinId;
+
+      if (priceChart) {
+        priceChart.destroy();
+        priceChart = null;
+      }
+
+      chartLabels = [];
+      chartData   = [];
+      lastPrice   = null;
+
+      initChart();
+
+      if (chartLabels.length && chartData.length) {
+        if ($('chartPriceLabel')) $('chartPriceLabel').textContent = fRp(chartData[chartData.length - 1]);
+        if ($('chartStatusText')) $('chartStatusText').textContent = 'Memuat data terbaru...';
+        if (priceChart) priceChart.update('none');
+      }
+
+      if (autoPriceMode && lastPrice != null) {
+        isAutoUpdating = true;
+        if ($('curPrice')) $('curPrice').value = Math.round(lastPrice);
+        isAutoUpdating = false;
+        calc();
+      } else if (autoPriceMode) {
+        fetchCoinPrice();
+      }
+
+      fetchCoinPrice();
+      chartFetchTimer = setInterval(fetchCoinPrice, REFRESH_INTERVAL);
+    }
+
+    function stopPriceChart() {
+      if (chartFetchTimer) {
+        clearInterval(chartFetchTimer);
+        chartFetchTimer = null;
+      }
+    }
+
+    /* ==== EVENT GANTI COIN ==== */
+    $('chartCoinSelect').addEventListener('change', (e) => {
+      const newCoinId = e.target.value;
+      if (!COIN_META[newCoinId]) return;
+
+      selectedCoinId = newCoinId;
+      localStorage.setItem('chart_coin_id', selectedCoinId);
+
+      applyBrandColor(selectedCoinId);
+
+      chartLabels = [];
+      chartData   = [];
+      lastPrice   = null;
+
+      if ($('chartCoinLabel')) $('chartCoinLabel').textContent = getCurrentSymbol();
+
+      if (priceChart) {
+        priceChart.destroy();
+        priceChart = null;
+      }
+
+      loadChartHistory();
       initChart();
 
       if (chartLabels.length && chartData.length) {
@@ -1932,24 +2093,24 @@
         calc();
       }
 
-      fetchDogecoinPrice();
-      chartFetchTimer = setInterval(fetchDogecoinPrice, REFRESH_INTERVAL);
-    }
-
-    function stopPriceChart() {
-      if (chartFetchTimer) {
-        clearInterval(chartFetchTimer);
-        chartFetchTimer = null;
-      }
-    }
+      fetchCoinPrice();
+      toast('Beralih ke grafik ' + getCurrentSymbol(), 'info');
+    });
 
     themeToggle.addEventListener('click', () => {
       setTimeout(() => {
         if (priceChart) {
-          priceChart.destroy();
-          priceChart = null;
-          initChart();
-          if (chartLabels.length) priceChart.update('none');
+          const meta = COIN_META[selectedCoinId] || COIN_META.dogecoin;
+          const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+          const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+          const textColor = isLight ? '#5a6478' : '#7a8ba8';
+          priceChart.options.scales.x.grid.color = gridColor;
+          priceChart.options.scales.y.grid.color = gridColor;
+          priceChart.options.scales.x.ticks.color = textColor;
+          priceChart.options.scales.y.ticks.color = textColor;
+          priceChart.data.datasets[0].borderColor = meta.color;
+          priceChart.data.datasets[0].backgroundColor = meta.fill;
+          priceChart.update('none');
         }
       }, 100);
     });
